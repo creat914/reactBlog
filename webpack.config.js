@@ -3,6 +3,7 @@ const htmlWebpackPlugin = require('html-webpack-plugin')
 const {CleanWebpackPlugin} = require("clean-webpack-plugin");
 const {HotModuleReplacementPlugin} = require('webpack')
 const {VueLoaderPlugin} = require('vue-loader')
+const resolve = dir => path.resolve(__dirname, dir);
 module.exports = {
     devServer: {
         hot: true,
@@ -37,6 +38,7 @@ module.exports = {
         new VueLoaderPlugin()
     ],
     module: {
+
         rules: [{
             test: /\.css/,
             use: [
@@ -49,7 +51,13 @@ module.exports = {
             use: [
                 'style-loader',
                 'css-loader',
-                'less-loader'
+                'less-loader',
+                {
+                    loader: 'style-resources-loader',
+                    options: {
+                        patterns: path.resolve(__dirname,'src/theme.less')
+                    }
+                }
             ]
         },
             {
@@ -70,5 +78,12 @@ module.exports = {
                 test: /\.vue$/,
                 loader: 'vue-loader'
             }]
-    }
+    },
+    resolve: {
+        alias: {
+            '@': resolve('src'),
+            '@pc':resolve('src/pc'),
+            '@mobile':resolve('src/mobile')
+        }
+    },
 }

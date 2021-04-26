@@ -1,10 +1,10 @@
-import React,{useState} from 'react'
-
+import React from 'react'
+import Header from "@pc/views/Header";
+import '@pc/style/home.less';
 const Home = ()=>{
-    const [a,setA] = useState(0)
     return (
-        <div>
-            <button onClick={()=>setA(5)}>这是花絮123{a}</button>
+        <div className={'home_wrapper'}>
+            <Header />
         </div>
     )
 }
