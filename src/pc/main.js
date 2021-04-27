@@ -8,14 +8,14 @@ import '@pc/reset.less'
 import Login from "@pc/views/Login";
 ReactDom.render(
     (
-        <>
+        <div className="view-container">
             <HashRouter>
                 <Switch>
                     <Route exact path="/Login" component={Login}></Route>
                     <Route exact path="/:path?" component={Blog}></Route>
                 </Switch>
             </HashRouter>
-        </>
+        </div>
     ),
     document.getElementById('root')
 )

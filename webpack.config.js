@@ -1,22 +1,29 @@
 const path = require('path')
 const htmlWebpackPlugin = require('html-webpack-plugin')
-const {CleanWebpackPlugin} = require("clean-webpack-plugin");
-const {HotModuleReplacementPlugin} = require('webpack')
-const {VueLoaderPlugin} = require('vue-loader')
+const {
+    CleanWebpackPlugin
+} = require("clean-webpack-plugin");
+const {
+    HotModuleReplacementPlugin
+} = require('webpack')
+const {
+    VueLoaderPlugin
+} = require('vue-loader')
 const resolve = dir => path.resolve(__dirname, dir);
 module.exports = {
     devServer: {
         hot: true,
         compress: true,
-        contentBase: path.join(__dirname, 'dist')
+        contentBase: path.join(__dirname, 'dist/pc')
     },
     entry: {
         mobile: './src/mobile/main',
         pc: './src/pc/main.js'
     },
     output: {
-        filename: "js/[name]/[name].bundle.js",
-        path: path.resolve(__dirname, 'dist')
+        publicPath: './',
+        filename: "[name]/js/[name].bundle.js?[hash]",
+        path: path.resolve(__dirname, "dist")
     },
     plugins: [
         new HotModuleReplacementPlugin(),
@@ -24,46 +31,42 @@ module.exports = {
         new htmlWebpackPlugin({
             title: "mobile-blog",
             template: "./src/mobile/mobile.html",
-            filename: 'mobileHtml.html',
+            filename: 'mobile/mobileHtml.html',
             inject: "body",
             chunks: ["mobile"]
         }),
         new htmlWebpackPlugin({
             title: "pc-blog",
             template: "./src/pc/pc.html",
-            filename: 'pcHtml.html',
+            filename: 'pc/pcHtml.html',
             inject: "body",
             chunks: ["pc"]
         }),
         new VueLoaderPlugin()
     ],
     module: {
-        rules: [
-            {
-                test: /\.(png|gif|jpg|svg|jpeg)$/i,
-                use: {
-                    loader: 'file-loader',
+        rules: [{
+                test: /\.(png|svg|jpe?g)$/,
+                use: [{
+                    loader: 'url-loader',
                     options: {
-                        name: '[name]-[hash].[ext]',
-                        outputPath: 'image/'
+                        limit: 8192,
+                        name: '[path]/[name].[hash:7].[ext]',
+                        fallback: 'file-loader',  // 当超过8192byte时，会回退使用file-loader
+                        context: path.resolve(__dirname, './src'),//过滤掉[path]的相对路径
+                        publicPath: '../'
                     }
-                }
+                }]
             },
             {
-                test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
-                loader: 'url-loader',
-                include: [resolve('src')],
-                options: {
-                    limit: 100000,
-                    name: 'image/[name]-[hash].[ext]'
-                }
+                test: /\.(woff|woff2|eot|ttf|otf|mp3|mp4)$/,
+                loader: 'file-loader'
             },
             {
                 test: /\.css/,
                 use: [
                     'style-loader',
                     'css-loader'
-
                 ]
             }, {
                 test: /\.less/,
@@ -87,16 +90,21 @@ module.exports = {
                         babelrc: false,
                         presets: [
                             require.resolve('@babel/preset-react'),
-                            [require.resolve('@babel/preset-env'), {modules: false}]
+                            [require.resolve('@babel/preset-env'), {
+                                modules: false
+                            }]
                         ],
-                        cacheDirectory: true
+                        cacheDirectory: true,
+                        exclude: /node_modules/
                     }
+
                 }
             },
             {
                 test: /\.vue$/,
                 loader: 'vue-loader'
-            }]
+            }
+        ]
     },
     resolve: {
         alias: {
