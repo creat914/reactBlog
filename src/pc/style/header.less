@@ -6,6 +6,7 @@ ul{
 }
 .header {
   width: 100%;
+  height: .convert(60)[@rem];
   background: #FFFFFF;
   color: @theme-color;
   font-weight: 500;
@@ -14,16 +15,16 @@ ul{
     box-shadow: 0 0 0 !important;
   }
 
-  &:after {
-    content: '';
-    width: 100vw;
-    height: .convert(1)[@rem];
-    position: absolute;
-    top: .convert(60)[@rem];
-    background: #f1f1f1;
-    left: 0;
-  }
 
+  &-fixed{
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: #FFFFFF;
+    border-bottom: .convert(1)[@rem] solid #f1f1f1;
+    z-index: 1996;
+  }
   &-container {
     .headerWith();
     height: 60px;

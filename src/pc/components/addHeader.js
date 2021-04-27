@@ -4,7 +4,7 @@ const simpleHoc = (WrappedComponent,local) => {
     return class extends Component {
         render() {
             return (
-                <div className='root-wrap'>
+                <div className='view-container'>
                     <Header local={local}/>
                     <WrappedComponent {...this.props}/>
                 </div>

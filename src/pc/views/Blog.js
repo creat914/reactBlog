@@ -5,26 +5,47 @@ import simpleHoc from "@pc/components/addHeader";
 import { Card } from "antd";
 const Blog = (props) => {
   const { match } = props;
+  const navList = [
+    {
+      key: "host",
+      title: "热门",
+    },
+    {
+      key: "new",
+      title: "最新",
+    },
+  ];
   return (
     <section className="blog">
-      <div className="blog-tags">
-        <ul>
-          <li
-            className={
-              match.params.tag === undefined || "recommended" ? "tagActive" : ""
-            }
-          >
-            <NavLink to="/">推荐</NavLink>
-          </li>
-        </ul>
-        <NavLink to="/tarEdit">标签管理</NavLink>
+      <div className="tag-fixed">
+        <div className="blog-tags">
+          <div className="blog-tags-container">
+            <ul>
+              <li
+                className={
+                  match.params.tag === undefined || "recommended"
+                    ? "tagActive"
+                    : ""
+                }
+              >
+                <NavLink to="/">推荐</NavLink>
+              </li>
+            </ul>
+            <NavLink to="/tarEdit">标签管理</NavLink>
+          </div>
+        </div>
       </div>
       <div className="blog-session">
-        <div className="blog-list">
+        <div className="blog-session-list">
           <Card
-            title="Default size card"
-            extra={<a href="#">More</a>}
-            style={{ width: 300 }}
+            title={
+              <div>
+                {navList.map(item=>{
+                   return <span key={item.key}>{item.title}</span>
+                })}
+              </div>
+            }
+            style={{ flex: 1 }}
           >
             <p>Card content</p>
             <p>Card content</p>

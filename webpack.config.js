@@ -14,14 +14,13 @@ module.exports = {
     devServer: {
         hot: true,
         compress: true,
-        contentBase: path.join(__dirname, 'dist/pc')
+        contentBase: path.join(__dirname, 'dist')
     },
     entry: {
         mobile: './src/mobile/main',
         pc: './src/pc/main.js'
     },
     output: {
-        publicPath: './',
         filename: "[name]/js/[name].bundle.js?[hash]",
         path: path.resolve(__dirname, "dist")
     },

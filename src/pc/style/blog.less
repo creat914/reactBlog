@@ -1,42 +1,47 @@
 .blog {
   width: 100%;
-  background: #FFFFFF;
-  box-shadow: 2px 0 6px #cecece;
   a {
     color: #909090;
-    font-size: .convert(15)[@rem];
+    font-size: .convert(15) [ @rem];
   }
-
+  .tag-fixed {
+    width: 100%;
+    height: .convert(50) [ @rem];
+  }
   &-tags {
-    .headerWith();
-    height: .convert(50)[@rem];
-    display: flex;
-    align-items: center;
-
-
-    ul {
-      flex: 1;
+    width: 100%;
+    position: fixed;
+    background: #ffffff;
+    left: 0;
+    &-container {
       display: flex;
       align-items: center;
+      height: .convert(50) [ @rem];
+      .headerWith();
 
-      li {
+      ul {
+        flex: 1;
+        display: flex;
+        align-items: center;
 
-        &.tagActive {
-          a {
-            color: @theme-color;
+        li {
+          &.tagActive {
+            a {
+              color: @theme-color;
+            }
           }
         }
       }
     }
   }
+  &-session {
+    .headerWith();
+    background: #f5f5f5;
+    
 
-  &-session{
-     .headerWith();
-     background: #f5f5f5;
-
-     &-list{
-      background: #FFFFFF;
-     }
+    &-list {
+      display: flex;
+      margin-top: .convert(10)[@rem];
+    }
   }
 }
-

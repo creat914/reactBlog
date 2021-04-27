@@ -8,7 +8,7 @@ import '@pc/reset.less'
 import Login from "@pc/views/Login";
 ReactDom.render(
     (
-        <div className="view-container">
+        <div className="root-wrap">
             <HashRouter>
                 <Switch>
                     <Route exact path="/Login" component={Login}></Route>
