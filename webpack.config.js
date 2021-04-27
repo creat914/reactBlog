@@ -38,28 +38,47 @@ module.exports = {
         new VueLoaderPlugin()
     ],
     module: {
-
-        rules: [{
-            test: /\.css/,
-            use: [
-                'style-loader',
-                'css-loader'
-
-            ]
-        }, {
-            test: /\.less/,
-            use: [
-                'style-loader',
-                'css-loader',
-                'less-loader',
-                {
-                    loader: 'style-resources-loader',
+        rules: [
+            {
+                test: /\.(png|gif|jpg|svg|jpeg)$/i,
+                use: {
+                    loader: 'file-loader',
                     options: {
-                        patterns: path.resolve(__dirname,'src/theme.less')
+                        name: '[name]-[hash].[ext]',
+                        outputPath: 'image/'
                     }
                 }
-            ]
-        },
+            },
+            {
+                test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
+                loader: 'url-loader',
+                include: [resolve('src')],
+                options: {
+                    limit: 100000,
+                    name: 'image/[name]-[hash].[ext]'
+                }
+            },
+            {
+                test: /\.css/,
+                use: [
+                    'style-loader',
+                    'css-loader'
+
+                ]
+            }, {
+                test: /\.less/,
+                use: [
+                    'style-loader',
+                    'css-loader',
+                    'less-loader',
+                    {
+                        loader: 'style-resources-loader',
+                        options: {
+                            patterns: path.resolve(__dirname, 'src/theme.less')
+                        }
+                    }
+                ]
+            },
             {
                 test: /\.js$/, //配置要处理的文件格式，一般使用正则表达式匹配
                 use: {
@@ -82,8 +101,8 @@ module.exports = {
     resolve: {
         alias: {
             '@': resolve('src'),
-            '@pc':resolve('src/pc'),
-            '@mobile':resolve('src/mobile')
+            '@pc': resolve('src/pc'),
+            '@mobile': resolve('src/mobile')
         }
     },
 }

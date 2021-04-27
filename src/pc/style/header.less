@@ -1,14 +1,15 @@
 .hidden{
   display: none;
 }
+ul{
+  margin-bottom: 0;
+}
 .header {
   width: 100%;
   background: #FFFFFF;
-  height: .convert(60)[@rem];
   color: @theme-color;
   font-weight: 500;
   position: relative;
-
   .ant-input-affix-wrapper {
     box-shadow: 0 0 0 !important;
   }
@@ -24,14 +25,13 @@
   }
 
   &-container {
-    max-width: 960px;
-    height: 100%;
-    margin: auto;
+    .headerWith();
+    height: 60px;
     display: flex;
     align-items: center;
 
     h1 {
-      font-size: .convert(30)[@rem];
+      font-size: .convert(28)[@rem];
       color: @theme-color;
       margin: 0;
       margin-right: .convert(24)[@rem];
@@ -60,7 +60,7 @@
     }
 
     .input-wrap {
-      width: 200px;
+      width:  .convert(200)[@rem];
       margin-right: .convert(18)[@rem];
     }
 
@@ -79,6 +79,7 @@
         top: .convert(59)[@rem];
         right: 0px;
         z-index: 2014;
+        background: #FFFFFF;
 
         ul {
           margin: .convert(8)[@rem] 0;

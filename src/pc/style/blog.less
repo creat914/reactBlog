@@ -1,0 +1,33 @@
+.blog {
+  width: 100%;
+  background: #FFFFFF;
+  box-shadow: 2px 0 6px #cecece;
+  a {
+    color: #909090;
+    font-size: .convert(15)[@rem];
+  }
+
+  &-tags {
+    .headerWith();
+    height: .convert(50)[@rem];
+    display: flex;
+    align-items: center;
+
+
+    ul {
+      flex: 1;
+      display: flex;
+      align-items: center;
+
+      li {
+
+        &.tagActive {
+          a {
+            color: @theme-color;
+          }
+        }
+      }
+    }
+  }
+}
+
