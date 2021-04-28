@@ -1,5 +1,6 @@
 const path = require('path')
 const htmlWebpackPlugin = require('html-webpack-plugin')
+const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 const {
     CleanWebpackPlugin
 } = require("clean-webpack-plugin");
@@ -21,9 +22,46 @@ module.exports = {
         pc: './src/pc/main.js'
     },
     output: {
-        filename: "[name]/js/[name].bundle.js?[hash]",
-        path: path.resolve(__dirname, "dist")
+        filename: "[name]/js/[name].[chunkhash].js",
+        path: path.resolve(__dirname, "dist"),
+        chunkFilename: "[name].[chunkhash].js"
     },
+    optimization:{
+        runtimeChunk: {
+            name: "manifest"
+        },
+        splitChunks: {
+            cacheGroups: {
+                vendor: {
+                    test: /[\\/]node_modules[\\/]/,
+                    name: "vendors",
+                    priority: -20,
+                    chunks: "all"
+                }
+            }
+        }
+    },
+    // optimization: {
+    //     runtimeChunk: "single",
+    //     splitChunks: {
+    //         minChunks: 3,
+    //         cacheGroups: {
+    //             commonjs: {
+    //                 chunks: 'initial',
+    //                 minChunks: 2,
+    //                 maxInitialRequests: 5,
+    //                 minSize: 0
+    //             },
+    //             vendor: {
+    //                 test: /node_modules/,
+    //                 chunks: 'initial',
+    //                 name: 'vendor',
+    //                 priority: 10,
+    //                 enforce: true
+    //             }
+    //         }
+    //     }
+    // },
     plugins: [
         new HotModuleReplacementPlugin(),
         new CleanWebpackPlugin(),
@@ -41,7 +79,11 @@ module.exports = {
             inject: "body",
             chunks: ["pc"]
         }),
-        new VueLoaderPlugin()
+        new VueLoaderPlugin(),
+        new MiniCssExtractPlugin({
+            filename: "[name]/css/[name].[chunkhash:8].css",
+            chunkFilename: "[id].[chunkhash:8].css"
+        })
     ],
     module: {
         rules: [{
@@ -62,16 +104,28 @@ module.exports = {
                 loader: 'file-loader'
             },
             {
-                test: /\.css/,
+                test: /\.css$/,
                 use: [
-                    'style-loader',
-                    'css-loader'
+                    MiniCssExtractPlugin.loader,
+                    {
+                        loader: 'css-loader',
+                        options: {
+                            importLoaders:2
+                        }
+                    },
+                    'postcss-loader'
                 ]
             }, {
-                test: /\.less/,
+                test: /\.less$/,
                 use: [
-                    'style-loader',
-                    'css-loader',
+                    MiniCssExtractPlugin.loader,
+                    {
+                        loader: 'css-loader',
+                        options: {
+                            importLoaders:3
+                        }
+                    },
+                    'postcss-loader',
                     'less-loader',
                     {
                         loader: 'style-resources-loader',
@@ -93,10 +147,12 @@ module.exports = {
                                 modules: false
                             }]
                         ],
+                        plugins: [["@babel/plugin-transform-runtime",{
+                            "corejs": 3 // 指定 runtime-corejs 的版本，目前有 2 3 两个版本
+                        }]],
                         cacheDirectory: true,
                         exclude: /node_modules/
                     }
-
                 }
             },
             {

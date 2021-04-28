@@ -17,7 +17,6 @@ const Header = (props) => {
   const nowState = useRef(state);
   const optionDom = useRef();
   useEffect(() => {
-    console.log("-----");
     const clickOption = (e) => {
       if (
         optionDom.current == e.target ||
