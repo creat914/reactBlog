@@ -1,8 +1,8 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import "@pc/style/blog.less";
 import simpleHoc from "@pc/components/addHeader";
 import { Card } from "antd";
+import "../style/blog.less";
 const Blog = (props) => {
   const { match } = props;
   const navList = [

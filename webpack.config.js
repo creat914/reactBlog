@@ -26,42 +26,34 @@ module.exports = {
         path: path.resolve(__dirname, "dist"),
         chunkFilename: "[name].[chunkhash].js"
     },
-    optimization:{
-        runtimeChunk: {
-            name: "manifest"
-        },
+    optimization: {
         splitChunks: {
+            chunks: 'all',
             cacheGroups: {
-                vendor: {
+                vendors: {
+                    name: 'chunk-vendors',
                     test: /[\\/]node_modules[\\/]/,
-                    name: "vendors",
+                    priority: -10,
+                },
+                antd:{
+                  name:'antd',
+                  test:/[\\/]node_modules[\\/]antd/,
+                  priority: -5
+                },
+                vue:{
+                    name:'vue',
+                    test:/[\\/]node_modules[\\/]vue/,
+                    priority: -4
+                },
+                common: {
+                    name: 'chunk-common',
+                    minChunks: 2,
                     priority: -20,
-                    chunks: "all"
+                    reuseExistingChunk: true
                 }
             }
         }
     },
-    // optimization: {
-    //     runtimeChunk: "single",
-    //     splitChunks: {
-    //         minChunks: 3,
-    //         cacheGroups: {
-    //             commonjs: {
-    //                 chunks: 'initial',
-    //                 minChunks: 2,
-    //                 maxInitialRequests: 5,
-    //                 minSize: 0
-    //             },
-    //             vendor: {
-    //                 test: /node_modules/,
-    //                 chunks: 'initial',
-    //                 name: 'vendor',
-    //                 priority: 10,
-    //                 enforce: true
-    //             }
-    //         }
-    //     }
-    // },
     plugins: [
         new HotModuleReplacementPlugin(),
         new CleanWebpackPlugin(),
@@ -70,19 +62,19 @@ module.exports = {
             template: "./src/mobile/mobile.html",
             filename: 'mobile/mobileHtml.html',
             inject: "body",
-            chunks: ["mobile"]
+            chunks: ["mobile","vue"]
         }),
         new htmlWebpackPlugin({
             title: "pc-blog",
             template: "./src/pc/pc.html",
             filename: 'pc/pcHtml.html',
             inject: "body",
-            chunks: ["pc"]
+            chunks: ["pc","antd","chunk-vendors"]
         }),
         new VueLoaderPlugin(),
         new MiniCssExtractPlugin({
             filename: "[name]/css/[name].[chunkhash:8].css",
-            chunkFilename: "[id].[chunkhash:8].css"
+            chunkFilename: "[name]/css/[id].[chunkhash:8].css"
         })
     ],
     module: {
