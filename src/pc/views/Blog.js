@@ -1,18 +1,14 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import simpleHoc from "@pc/components/addHeader";
-import { Card } from "antd";
-import "../style/blog.less";
+import { Card, Carousel } from "antd";
+import "@pc/style/blog.less";
 const Blog = (props) => {
   const { match } = props;
   const navList = [
     {
       key: "host",
       title: "热门",
-    },
-    {
-      key: "new",
-      title: "最新",
     },
   ];
   return (
@@ -40,8 +36,8 @@ const Blog = (props) => {
           <Card
             title={
               <div>
-                {navList.map(item=>{
-                   return <span key={item.key}>{item.title}</span>
+                {navList.map((item) => {
+                  return <span key={item.key}>{item.title}</span>;
                 })}
               </div>
             }
@@ -51,6 +47,13 @@ const Blog = (props) => {
             <p>Card content</p>
             <p>Card content</p>
           </Card>
+        </div>
+        <div className="blog-session-banner">
+          <Carousel autoplay>
+          <img src={require('../assets/2045435.jpg')}/>
+          <img src={require('../assets/2025986.jpg')}/>
+          <img src={require('../assets/2016486.jpg')}/>
+          </Carousel>
         </div>
       </div>
     </section>

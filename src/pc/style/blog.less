@@ -2,11 +2,11 @@
   width: 100%;
   a {
     color: #909090;
-    font-size: .convert(15) [ @rem];
+    font-size: .convert(15) [@rem];
   }
   .tag-fixed {
     width: 100%;
-    height: .convert(50) [ @rem];
+    height: .convert(50) [@rem];
   }
   &-tags {
     width: 100%;
@@ -16,7 +16,7 @@
     &-container {
       display: flex;
       align-items: center;
-      height: .convert(50) [ @rem];
+      height: .convert(50) [@rem];
       .headerWith();
 
       ul {
@@ -36,12 +36,16 @@
   }
   &-session {
     .headerWith();
-    background: #f5f5f5;
-    
-
+    display: flex;
+    margin-top: 10px;
     &-list {
-      display: flex;
-      margin-top: .convert(10)[@rem];
+      flex: 1;
     }
+    &-banner{
+      width: 200px;
+        img{
+           width: 100%;
+        }
+      }
   }
 }
