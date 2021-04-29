@@ -2,7 +2,7 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import simpleHoc from "@pc/components/addHeader";
 import { Card, Carousel } from "antd";
-import "@pc/style/blog.less";
+import "../style/blog.less";
 const Blog = (props) => {
   const { match } = props;
   const navList = [

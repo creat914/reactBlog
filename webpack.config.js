@@ -2,13 +2,16 @@ const path = require("path");
 const htmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
 const { HotModuleReplacementPlugin } = require("webpack");
 const { VueLoaderPlugin } = require("vue-loader");
 const resolve = (dir) => path.resolve(__dirname, dir);
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 module.exports = {
   devServer: {
     hot: true,
-    compress: true,
+    openPage:'/pc/pcHtml.html',
+    compress: false,
     contentBase: path.join(__dirname, "dist"),
   },
   entry: {
@@ -21,6 +24,8 @@ module.exports = {
     chunkFilename: "[name].[chunkhash].js",
   },
   optimization: {
+    minimize: true,
+    minimizer: [new TerserPlugin()],
     splitChunks: {
       chunks: "all",
       cacheGroups: {
@@ -34,10 +39,19 @@ module.exports = {
           test: /[\\/]node_modules[\\/]antd/,
           priority: -5,
         },
-        vue: {
-          name: "vue",
-          test: /[\\/]node_modules[\\/]vue/,
-          priority: -4,
+        reactBase: {
+          test: (module) => {
+            return /react|react-router-dom|react-dom/.test(module.context);
+          }, // 直接使用 test 来做路径匹配，抽离react相关代码
+          name: "reactBase",
+          priority: -2
+        },
+        vueBase: {
+          test: (module) => {
+            return /vue|vue-router|vuex/.test(module.context);
+          }, // 直接使用 test 来做路径匹配，抽离vue相关代码
+          name: "vueBase",
+          priority: -1
         },
         common: {
           name: "chunk-common",
@@ -51,24 +65,26 @@ module.exports = {
   plugins: [
     new HotModuleReplacementPlugin(),
     new CleanWebpackPlugin(),
-    new htmlWebpackPlugin({
-      title: "mobile-blog",
-      template: "./src/mobile/mobile.html",
-      filename: "mobile/mobileHtml.html",
-      inject: "body",
-      chunks: ["mobile", "vue"],
-    }),
+    new VueLoaderPlugin(),
+    // new BundleAnalyzerPlugin(),
     new htmlWebpackPlugin({
       title: "pc-blog",
       template: "./src/pc/pc.html",
       filename: "pc/pcHtml.html",
       inject: "body",
-      chunks: ["pc", "antd", "chunk-vendors"],
+      chunks: ["pc","antd","chunk-common","reactBase","chunk-vendors"],
     }),
-    new VueLoaderPlugin(),
+    new htmlWebpackPlugin({
+      title: "mobile-blog",
+      template: "./src/mobile/mobile.html",
+      filename: "mobile/mobileHtml.html",
+      inject: "body",
+      chunks: ["mobile","chunk-common","vueBase","elementPlus","chunk-vendors"],
+    })
+    // ,
     // new MiniCssExtractPlugin({
-    //     filename: "[name]/css/[name].[chunkhash:8].css",
-    //     chunkFilename: "[name]/css/[id].[chunkhash:8].css"
+    //     filename: "[name]/css/[name].[chunkhash:16].css",
+    //     chunkFilename: "[name].[id].[chunkhash:16].css"
     // })
   ],
   module: {
@@ -78,12 +94,12 @@ module.exports = {
         loader: "vue-loader",
       },
       {
-        test: /\.(woff|woff2|eot|ttf|otf|mp3|mp4)$/,
+        test: /\.(woff|woff2|eot|ttf|otf|mp3|mp4|ttf)$/,
         use: [
           {
             loader: "file-loader",
             options: {
-              name: "[path]/[name].[hash:7].[ext]",
+              name: "[path]/[name].[hash:16].[ext]",
               context: path.resolve(__dirname, "./src"), //过滤掉[path]的相对路径
               publicPath: "../",
               esModule: false // 这里设置为false
@@ -98,7 +114,7 @@ module.exports = {
             loader: "url-loader",
             options: {
               limit: 8192,
-              name: "[path]/[name].[hash:7].[ext]",
+              name: "[path]/[name].[hash:16].[ext]",
               fallback: "file-loader", // 当超过8192byte时，会回退使用file-loader
               context: path.resolve(__dirname, "./src"), //过滤掉[path]的相对路径
               publicPath: "../",
@@ -110,8 +126,8 @@ module.exports = {
       {
         test: /\.css$/,
         use: [
-          // MiniCssExtractPlugin.loader,
           "style-loader",
+          //   MiniCssExtractPlugin.loader,
           {
             loader: "css-loader",
             options: {
@@ -124,8 +140,8 @@ module.exports = {
       {
         test: /\.less$/,
         use: [
-          // MiniCssExtractPlugin.loader,
           "style-loader",
+          // MiniCssExtractPlugin.loader,
           {
             loader: "css-loader",
             options: {

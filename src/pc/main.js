@@ -7,7 +7,7 @@ import "@/flexible"
 import '@pc/reset.less'
 import Login from "@pc/views/Login";
 import {asyncComponent} from '@pc/components/asyncComponent'
-const Blog = asyncComponent(() => import(/* webpackChunkName: "pc/chuck/Blog" */"./views/Blog"))
+const Blog = asyncComponent(() => import(/* webpackChunkName: "pc/chunck/Blog" */"./views/Blog"))
 ReactDom.render(
     (
         <div className="root-wrap">
