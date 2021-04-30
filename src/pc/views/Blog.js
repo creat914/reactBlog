@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useEffect,useState,useRef} from "react";
 import { NavLink } from "react-router-dom";
 import simpleHoc from "@pc/components/addHeader";
 import { Card, Carousel } from "antd";
@@ -12,6 +12,21 @@ const Blog = (props) => {
       title: "热门",
     },
   ];
+  useEffect(()=>{
+    const moreBox = document.querySelector('.moreBox')
+    var io = new IntersectionObserver((entries )=>{
+         if(entries[0].isIntersecting){
+           // io.unobserve(moreBox)
+           // setTimeout(()=>{
+           //   io.observe(moreBox)
+           // },3000)
+         }
+    });
+    io.observe(moreBox)
+    return ()=>{
+        io.disconnect();
+    }
+  },[])
   return (
     <section className="blog">
       <div className="tag-fixed">
@@ -93,6 +108,7 @@ const Blog = (props) => {
           </Carousel>
         </div>
       </div>
+      <div className="moreBox">正在加载...</div>
     </section>
   );
 };

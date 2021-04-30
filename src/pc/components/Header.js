@@ -8,13 +8,12 @@ import {
     RestOutlined,
 } from "@ant-design/icons";
 import "@pc/style/header.less";
-
 const Header = (props) => {
     const {match} = props;
     const {Search} = Input;
     const onSearch = (value) => console.log(value);
     const [state, setState] = useState(false);
-    const [hideenTop, setHideenTop] = useState(false);
+    // const [hideenTop, setHideenTop] = useState(false);
     const nowState = useRef(state);
     const optionDom = useRef();
     useEffect(() => {
@@ -28,49 +27,33 @@ const Header = (props) => {
                 setState(false);
             }
         };
-        //监听滚动
-        const onScollFunc = () => {
-            let defaultScrollTop = 0;
-            return () => {
-                let currenScrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-                // 证明是向下
-                if (currenScrollTop - defaultScrollTop > 100) {
-                    defaultScrollTop = currenScrollTop;
-                    setHideenTop(true)
-                } else if(defaultScrollTop - currenScrollTop > 100){
-                    setHideenTop(false)
-                    defaultScrollTop = currenScrollTop;
-                }
-            }
-        }
-        // const onScollFunc = (func)=>{
-        //     let nowTime = new Date().getTime();
-        //     return  () => {
-        //       let currenTime = new Date().getTime();
-        //       console.log(currenTime - nowTime)
-        //       if(currenTime - nowTime > 200){
-        //          nowTime = currenTime;
-        //          if((document.documentElement.scrollTop||document.body.scrollTop)>200){
-        //                     setHideenTop(true)
-        //             }else{
-        //                    setHideenTop(false)
-        //             }
-        //        }
+        // //监听滚动
+        // const onScollFunc = () => {
+        //     let defaultScrollTop = 0;
+        //     return () => {
+        //         let currenScrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+        //         // 证明是向下
+        //         if (currenScrollTop - defaultScrollTop > 100) {
+        //             defaultScrollTop = currenScrollTop;
+        //             setHideenTop(true)
+        //         } else if(defaultScrollTop - currenScrollTop > 100){
+        //             setHideenTop(false)
+        //             defaultScrollTop = currenScrollTop;
+        //         }
         //     }
         // }
-        const EventScollFunc = onScollFunc();
-        window.addEventListener("scroll", EventScollFunc);
+        // window.addEventListener("scroll", EventScollFunc);
         window.addEventListener("click", clickOption);
         return () => {
             window.removeEventListener("click", clickOption);
-            window.removeEventListener("scroll", EventScollFunc);
+            // window.removeEventListener("scroll", EventScollFunc);
         };
     }, []);
     useEffect(() => {
         nowState.current = state;
     });
     return (
-        <header className={hideenTop ? 'header hiddenHeder' : 'header'}>
+        <header className={props.hideenTop ? 'header hiddenHeder' : 'header'}>
             <div className="header-fixed">
                 <div className="header-container">
                     <h1
