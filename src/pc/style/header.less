@@ -7,15 +7,25 @@ ul{
 .header {
   width: 100%;
   height: .convert(60)[@rem];
+  transition: all 0.3s;
   background: #FFFFFF;
   color: @theme-color;
   font-weight: 500;
   position: relative;
+
+
   .ant-input-affix-wrapper {
     box-shadow: 0 0 0 !important;
   }
 
+  &.hiddenHeder{
+    height: 0;
+    overflow: hidden;
 
+    .header-fixed{
+      top:-60px;
+    }
+  }
   &-fixed{
     width: 100%;
     position: fixed;
@@ -23,7 +33,8 @@ ul{
     left: 0;
     background: #FFFFFF;
     border-bottom: .convert(1)[@rem] solid #f1f1f1;
-    z-index: 1996;
+    z-index: 2019;
+    transition: all 0.3s;
   }
   &-container {
     .headerWith();

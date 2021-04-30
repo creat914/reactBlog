@@ -37,16 +37,16 @@ const Blog = (props) => {
           <Card
             title={
               <div className="list-header">
-                {navList.map((item) => {
-                  return <span key={item.key}>{item.title}</span>;
+                {navList.map((item,index) => {
+                  return <span key={index}>{item.title}</span>;
                 })}
               </div>
             }
             style={{ flex: 1 }}
           >
-            {[..."2324324234234"].map((item) => {
+            {[..."123456789"].map((item,index) => {
               return (
-                <div className="content-box">
+                <div className="content-box" key={index}>
                   <div className="info-box">
                     <ul className="meta-list">
                       <li>

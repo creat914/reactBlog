@@ -6,12 +6,15 @@ const TerserPlugin = require("terser-webpack-plugin");
 const { HotModuleReplacementPlugin } = require("webpack");
 const { VueLoaderPlugin } = require("vue-loader");
 const resolve = (dir) => path.resolve(__dirname, dir);
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 module.exports = {
   devServer: {
     hot: true,
-    openPage:'/pc/pcHtml.html',
+    openPage:'pc/pcHtml.html',
     compress: false,
+    open:true,
+    host:'127.0.0.1',
+    port:8090,
     contentBase: path.join(__dirname, "dist"),
   },
   entry: {
