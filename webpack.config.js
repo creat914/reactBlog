@@ -1,20 +1,24 @@
 const path = require("path");
 const htmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const webpack = require("webpack");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
-const TerserPlugin = require("terser-webpack-plugin");
+// const TerserPlugin = require("terser-webpack-plugin");
 const { HotModuleReplacementPlugin } = require("webpack");
 const { VueLoaderPlugin } = require("vue-loader");
 const resolve = (dir) => path.resolve(__dirname, dir);
+const isDev = process.env.NODE_ENV === 'development'
+
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 module.exports = {
+  mode: 'development',
   devServer: {
     hot: true,
-    openPage:'pc/pcHtml.html',
+    openPage: "pc/pcHtml.html",
     compress: false,
-    open:true,
-    host:'127.0.0.1',
-    port:8090,
+    open: true,
+    host: "127.0.0.1",
+    port: 8090,
     contentBase: path.join(__dirname, "dist"),
   },
   entry: {
@@ -28,7 +32,7 @@ module.exports = {
   },
   optimization: {
     minimize: true,
-    minimizer: [new TerserPlugin()],
+    // minimizer: [new TerserPlugin()],
     splitChunks: {
       chunks: "all",
       cacheGroups: {
@@ -37,24 +41,24 @@ module.exports = {
           test: /[\\/]node_modules[\\/]/,
           priority: -10,
         },
-        antd: {
-          name: "antd",
-          test: /[\\/]node_modules[\\/]antd/,
-          priority: -5,
-        },
+        // antd: {
+        //   name: "antd",
+        //   test: /[\\/]node_modules[\\/]antd/,
+        //   priority: -5,
+        // },
         reactBase: {
           test: (module) => {
             return /react|react-router-dom|react-dom/.test(module.context);
           }, // 直接使用 test 来做路径匹配，抽离react相关代码
           name: "reactBase",
-          priority: -2
+          priority: -2,
         },
         vueBase: {
           test: (module) => {
             return /vue|vue-router|vuex/.test(module.context);
           }, // 直接使用 test 来做路径匹配，抽离vue相关代码
           name: "vueBase",
-          priority: -1
+          priority: -1,
         },
         common: {
           name: "chunk-common",
@@ -75,15 +79,21 @@ module.exports = {
       template: "./src/pc/pc.html",
       filename: "pc/pcHtml.html",
       inject: "body",
-      chunks: ["pc","antd","chunk-common","reactBase","chunk-vendors"],
+      chunks: ["pc", "chunk-common", "reactBase", "chunk-vendors"],
     }),
     new htmlWebpackPlugin({
       title: "mobile-blog",
       template: "./src/mobile/mobile.html",
       filename: "mobile/mobileHtml.html",
       inject: "body",
-      chunks: ["mobile","chunk-common","vueBase","elementPlus","chunk-vendors"],
-    })
+      chunks: [
+        "mobile",
+        "chunk-common",
+        "vueBase",
+        "elementPlus",
+        "chunk-vendors",
+      ],
+    }),
     // ,
     // new MiniCssExtractPlugin({
     //     filename: "[name]/css/[name].[chunkhash:16].css",
@@ -105,7 +115,7 @@ module.exports = {
               name: "[path]/[name].[hash:16].[ext]",
               context: path.resolve(__dirname, "./src"), //过滤掉[path]的相对路径
               publicPath: "../",
-              esModule: false // 这里设置为false
+              esModule: false, // 这里设置为false
             },
           },
         ],
@@ -121,10 +131,10 @@ module.exports = {
               fallback: "file-loader", // 当超过8192byte时，会回退使用file-loader
               context: path.resolve(__dirname, "./src"), //过滤掉[path]的相对路径
               publicPath: "../",
-              esModule: false
+              esModule: false,
             },
           },
-        ]
+        ],
       },
       {
         test: /\.css$/,
@@ -134,21 +144,42 @@ module.exports = {
           {
             loader: "css-loader",
             options: {
-              importLoaders: 2,
+              importLoaders: 2
             },
           },
           "postcss-loader",
         ],
       },
+      // {
+      //   test: /\.module\.less$/,
+      //   include:/\/src\/pc\/style/,
+      //   use: [
+      //     "style-loader",
+      //     // MiniCssExtractPlugin.loader,
+      //     {
+      //       loader: "css-loader",
+      //       options: {
+      //         importLoaders: 3,
+      //         modules: {
+      //           mode: 'local',
+      //           localIdentName: '[name]-[local]-[hash:base64:5]'
+      //         }
+      //       },
+      //     },
+      //     "postcss-loader",
+      //     "less-loader"
+      //   ],
+      // },
       {
         test: /\.less$/,
+        exclude:path.resolve(__dirname,'src/pc/style'),
         use: [
           "style-loader",
           // MiniCssExtractPlugin.loader,
           {
             loader: "css-loader",
             options: {
-              importLoaders: 3,
+              importLoaders: 3
             },
           },
           "postcss-loader",
@@ -161,6 +192,33 @@ module.exports = {
           },
         ],
       },
+      {
+        test: /\.less$/,
+        include:path.resolve(__dirname,'src/pc/style'),
+        use: [
+          "style-loader",
+          // MiniCssExtractPlugin.loader,
+          {
+            loader: "css-loader",
+            options: {
+              importLoaders: 3,
+              modules: {
+                mode: 'local',
+                localIdentName: '[name]-[local]-[hash:base64:5]'
+              }
+            },
+          },
+          "postcss-loader",
+          "less-loader",
+          {
+            loader: "style-resources-loader",
+            options: {
+              patterns: path.resolve(__dirname, "src/theme.less"),
+            },
+          },
+        ],
+      },
+     
       {
         test: /\.js$/, //配置要处理的文件格式，一般使用正则表达式匹配
         use: {
@@ -198,5 +256,15 @@ module.exports = {
       "@pc": resolve("src/pc"),
       "@mobile": resolve("src/mobile"),
     },
+    fallback: {
+      buffer: require.resolve("buffer/"),
+    },
   },
 };
+// buffer: require.resolve('buffer/'),
+// util: require.resolve('util/'),
+// stream: require.resolve('stream-browserify/'),
+// vm: require.resolve('vm-browserify')
+// crypto: require.resolve('crypto-browserify'),
+// path: require.resolve('path-browserify'),
+// url: require.resolve('url'),

@@ -4,11 +4,14 @@
 </template>
 
 <script>
-    export default {
-        name: "App"
-    }
+export default {
+  name: "App",
+};
 </script>
 
-<style scoped>
-
+<style  lang="less" scoped>
+@import url("@mobile/a.less");
+body {
+  width: 100%;
+}
 </style>

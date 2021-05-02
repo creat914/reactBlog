@@ -1,0 +1,53 @@
+:global {
+  //   .loop(@i) when (@i > 0) {
+  //     .loop((@i - 1)); // 递归调用自身
+  //     padding: (10px + 5 * @i);
+  //   }
+  .xkd(@n, @i: 1) when (@i =< @n) {
+    .menu-@{i} {
+      padding-left: (@i * 10) - 10px;
+
+      &::before{
+          content:"";
+          display: inline-block;
+          width: .convert(4)[@rem];
+          height: .convert(4)[@rem];
+          background: #999999;
+          border-radius: 50%;
+          vertical-align: middle;
+          margin-right:.convert(5)[@rem];
+      }
+    }
+    .xkd(@n, (@i + 1));
+  }
+  .markdown-body {
+    padding: 16px 4%;
+  }
+
+  .menuBox {
+    width: 100%;
+    padding: .convert(10) [ @rem] .convert(8) [ @rem];
+    background: #ffffff;
+    margin-top: .convert(20) [ @rem];
+    border-radius: .convert(2) [ @rem];
+    position: sticky;
+    top: .convert(20) [ @rem];
+
+    h4{
+        font-size: .convert(14)[@rem];
+    }
+    ul {
+      li {
+        cursor: pointer;
+        padding: .convert(4) [ @rem] .convert(6) [ @rem];
+        font-size: .convert(12) [ @rem];
+        &.menu-1 {
+            font-size: .convert(14) [ @rem];
+            color: #333333;
+            font-weight: bold;
+        }
+      }
+      .xkd(6)
+    }
+  }
+}

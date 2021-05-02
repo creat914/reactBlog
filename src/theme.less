@@ -1,17 +1,18 @@
-@theme-color:#007fff;
-@theme-btn-clor:#0876e4;
-@default-w: 1920;
-.convert(@px, @width: @default-w) {
-  @var:  unit((@px/@width)) * 10;
-  @rem: ~'@{px}px';
-  @rems: ~'@{var}rem';
-}
-.rem(@name,@px) {
-    @{name}: unit((@px / @default-w)*10, rem);
-}
-.headerWith(@width:960){
-  max-width: ~'@{width}px';
-  width: 100%;
-  margin-left: auto;
-  margin-right: auto;
-}
+
+  @theme-color: #007fff;
+  @theme-btn-clor: #0876e4;
+  @default-w: 1920;
+  .convert(@px, @width: @default-w) {
+    @var: unit((@px / @width)) * 10;
+    @rem: ~"@{px}px";
+    @rems: ~"@{var}rem";
+  }
+  .rem(@name,@px) {
+    @{name}: unit((@px / @default-w) * 10, rem);
+  }
+  .headerWith(@width:960) {
+    max-width: ~"@{width}px";
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }

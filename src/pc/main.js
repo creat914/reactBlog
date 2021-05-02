@@ -8,12 +8,16 @@ import '@pc/reset.less'
 import Login from "@pc/views/Login";
 import {asyncComponent} from '@pc/components/asyncComponent'
 const Blog = asyncComponent(() => import(/* webpackChunkName: "pc/chunck/Blog" */"./views/Blog"))
+const Eidtor = asyncComponent(() => import(/* webpackChunkName: "pc/chunck/Editor" */"./views/editor"))
+const ArticleDetail = asyncComponent(() => import(/* webpackChunkName: "pc/chunck/Editor" */"./views/articleDetail"))
 ReactDom.render(
     (
         <div className="root-wrap">
             <HashRouter>
                 <Switch>
                     <Route exact path="/Login" component={Login}></Route>
+                    <Route exact path="/Eidtor/:id?" component={Eidtor}></Route>
+                    <Route exact path="/post/:id?" component={ArticleDetail}></Route>
                     <Route exact path="/:path?" component={Blog}></Route>
                 </Switch>
             </HashRouter>
