@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { NavLink, withRouter } from "react-router-dom";
-import { Input, Button, Avatar } from "antd";
+import {  Input, Button, Avatar,Modal, Form } from "antd";
 import {
   BellFilled,
   LogoutOutlined,
@@ -8,6 +8,14 @@ import {
   RestOutlined,
 } from "@ant-design/icons";
 import headerModules from "@pc/style/header.less";
+const layout = {
+  wrapperCol: { span: 24 },
+};
+const tailLayout = {
+  wrapperCol: {
+      span: 24,
+  },
+};
 const Header = (props) => {
   const { match } = props;
   const { Search } = Input;
@@ -16,6 +24,9 @@ const Header = (props) => {
   // const [hideenTop, setHideenTop] = useState(false);
   const nowState = useRef(state);
   const optionDom = useRef();
+  const [visible, setVisible] = React.useState(false);
+  const [confirmLoading, setConfirmLoading] = React.useState(false);
+  const [modalText, setModalText] = React.useState("Content of the modal");
   useEffect(() => {
     const clickOption = (e) => {
       if (
@@ -35,6 +46,29 @@ const Header = (props) => {
   useEffect(() => {
     nowState.current = state;
   });
+  const showModal = () => {
+    setVisible(true);
+  };
+  const handleOk = () => {
+    setModalText("The modal will be closed after two seconds");
+    setConfirmLoading(true);
+    setTimeout(() => {
+      setVisible(false);
+      setConfirmLoading(false);
+    }, 2000);
+  };
+
+  const handleCancel = () => {
+    console.log("Clicked cancel button");
+    setVisible(false);
+  };
+  const onFinish = (values) => {
+    console.log("Success:", values);
+  };
+
+  const onFinishFailed = (errorInfo) => {
+    console.log("Failed:", errorInfo);
+  };
   return (
     <header
       className={
@@ -71,7 +105,7 @@ const Header = (props) => {
             />
           </div>
           <Button type="primary" className={headerModules["writeArtice"]}>
-             <NavLink to="/Eidtor" >写文章</NavLink>
+            <NavLink to="/Eidtor">写文章</NavLink>
           </Button>
           <BellFilled
             style={{
@@ -80,7 +114,9 @@ const Header = (props) => {
               margin: "0 18px",
             }}
           />
-          <div className={headerModules["to-login"]}>登录</div>
+          <div className={headerModules["to-login"]} onClick={showModal}>
+            登录
+          </div>
           {false && (
             <div className={headerModules["avatar"]}>
               <Avatar
@@ -119,6 +155,47 @@ const Header = (props) => {
           )}
         </div>
       </div>
+      <Modal
+        title="登录"
+        visible={visible}
+        onOk={handleOk}
+        confirmLoading={confirmLoading}
+        onCancel={handleCancel}
+        centered
+        destroyOnClose
+        width={350}
+        footer={null}
+      >
+        <Form
+          {...layout}
+          name="basic"
+          initialValues={{ remember: true }}
+          onFinish={onFinish}
+          onFinishFailed={onFinishFailed}
+          preserve={false} 
+        >
+          <Form.Item
+            name="username"
+            rules={[{ required: true, message: "账号不能为空！" }]}
+          >
+            <Input placeholder="请输入账号"/>
+          </Form.Item>
+
+          <Form.Item
+            name="password"
+            rules={[{ required: true, message: "密码不能为空！" }]}
+          >
+            <Input.Password placeholder="请输入密码"/>
+          </Form.Item>
+          <Form.Item {...tailLayout}>
+            <Button type="primary" htmlType="submit" style={{width:"100%"}}>
+              登录
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
+   
+   
     </header>
   );
 };

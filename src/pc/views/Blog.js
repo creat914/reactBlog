@@ -1,11 +1,13 @@
-import React, { useEffect, useState, useRef } from "react";
-import { NavLink } from "react-router-dom";
+import React, { useContext ,useEffect} from "react";
+import { NavLink, Link } from "react-router-dom";
 import simpleHoc from "@pc/components/addHeader";
 import { Card } from "antd";
 import { LikeFilled, MessageFilled, ForkOutlined } from "@ant-design/icons";
 import MainComp from "@pc/components/mainComp";
-import blogStyle from '@pc/style/blog.less'
+import blogStyle from "@pc/style/blog.less";
+import { CounterContext } from "@pc/sotre/index";
 const Blog = (props) => {
+  const { reduxState, dispatch } = useContext(CounterContext);
   const { match } = props;
   const navList = [
     {
@@ -13,6 +15,9 @@ const Blog = (props) => {
       title: "热门",
     },
   ];
+  useEffect(() => {
+     console.log(reduxState)
+  },[]);
   const BlogList = () => {
     return (
       <Card
@@ -25,7 +30,7 @@ const Blog = (props) => {
         }
         style={{ flex: 1 }}
       >
-        {[..."123456789"].map((item, index) => {
+        {[..."12"].map((item, index) => {
           return (
             <div className={blogStyle["content-box"]} key={index}>
               <div className={blogStyle["info-box"]}>
@@ -39,7 +44,9 @@ const Blog = (props) => {
                   </li>
                 </ul>
                 <div className={blogStyle["info-row"]}>
-                  <a href="">让我在面试官面前结巴的24个XX和XX的区别！</a>
+                  <Link to={"/post/" + index}>
+                    让我在面试官面前结巴的24个XX和XX的区别！
+                  </Link>
                 </div>
                 <div className={blogStyle["action-row"]}>
                   <ul>
@@ -49,7 +56,7 @@ const Blog = (props) => {
                     </li>
                     <li title="吐糟">
                       <MessageFilled style={{ color: "#b2bac2" }} />
-                    <span className={blogStyle["count"]}>14</span>
+                      <span className={blogStyle["count"]}>14</span>
                     </li>
                     <li title="分享">
                       <ForkOutlined style={{ color: "#b2bac2" }} />
@@ -57,7 +64,10 @@ const Blog = (props) => {
                   </ul>
                 </div>
               </div>
-              <img className={blogStyle["thumb"]} src={require("../assets/2045435.jpg")} />
+              <img
+                className={blogStyle["thumb"]}
+                src={require("../assets/2045435.jpg")}
+              />
             </div>
           );
         })}
@@ -70,20 +80,20 @@ const Blog = (props) => {
         <ul>
           <li
             className={
-              match.params.tag === undefined || blogStyle["recommended"] ? blogStyle["tagActive"] : ""
+              match.params.tag === undefined || blogStyle["recommended"]
+                ? blogStyle["tagActive"]
+                : ""
             }
           >
             <NavLink to="/">推荐</NavLink>
           </li>
         </ul>
-        <NavLink to="/tarEdit">标签管理</NavLink>
+        {/* <NavLink to="/tarEdit">标签管理</NavLink> */}
       </div>
     );
   };
   const BlogAside = () => {
-    return (
-       <div></div>
-    );
+    return <div></div>;
   };
   const getMoreDate = () => {
     console.log("到达底部了");

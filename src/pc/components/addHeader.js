@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import Header from "@pc/components/Header";
-
 const simpleHoc = (WrappedComponent, local) => {
     return class extends Component {
         constructor() {
