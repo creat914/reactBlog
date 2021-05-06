@@ -1,6 +1,6 @@
 import React, { useContext ,useEffect} from "react";
 import { NavLink, Link } from "react-router-dom";
-import simpleHoc from "@pc/components/addHeader";
+
 import { Card } from "antd";
 import { LikeFilled, MessageFilled, ForkOutlined } from "@ant-design/icons";
 import MainComp from "@pc/components/mainComp";
@@ -107,4 +107,4 @@ const Blog = (props) => {
     />
   );
 };
-export default simpleHoc(Blog, 0);
+export default Blog;

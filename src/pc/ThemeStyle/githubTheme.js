@@ -1,4 +1,4 @@
-.markdown-body .octicon {
+export default  `.markdown-body .octicon {
     display: inline-block;
     fill: currentColor;
     vertical-align: text-bottom
@@ -845,4 +845,4 @@
 .markdown-body .task-list-item input {
     margin: 0 .2em .25em -1.6em;
     vertical-align: middle
-}
+}`

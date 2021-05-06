@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { Carousel, Form, Input, Button } from "antd";
 import mainComp from "@pc/style/mainComp.less";
-console.log(mainComp)
 const MainComp = (props) => {
   useEffect(() => {
     const moreBox = document.querySelector(`.${mainComp.moreBox}`);
@@ -19,7 +18,7 @@ const MainComp = (props) => {
       io.disconnect();
     };
   }, []);
-  const layout = {  
+  const layout = {
     wrapperCol: { span: 24 },
   };
   const tailLayout = {
@@ -73,9 +72,9 @@ const MainComp = (props) => {
             </Form>
           </div>
           <Carousel autoplay>
-            <img src={require("../assets/2045435.jpg")} />
-            <img src={require("../assets/2025986.jpg")} />
-            <img src={require("../assets/2016486.jpg")} />
+            <img src={require("@pc/assets/2045435.jpg")} />
+            <img src={require("@pc/assets/2025986.jpg")} />
+            <img src={require("@pc/assets/2016486.jpg")} />
           </Carousel>
           {props.aside}
         </div>

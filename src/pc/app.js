@@ -1,11 +1,10 @@
 import "antd/dist/antd.css"; // or 'antd/dist/antd.less'
-import React, { useReducer, useCallback } from "react";
+import React,{useReducer ,useCallback } from "react";
 import { HashRouter, Route, Switch } from "react-router-dom";
-// import Blog from "@pc/views/Blog";
 import "@/flexible";
 import "@pc/reset.less";
-import Login from "@pc/views/Login";
 import { asyncComponent } from "@pc/components/asyncComponent";
+import simpleHoc from "@pc/components/addHeader";
 import {
   reducer,
   CounterContext,
@@ -13,18 +12,18 @@ import {
   SET_TOKEN,
   SET_USERINFO,
 } from "@pc/sotre/index";
-const Blog = asyncComponent(() =>
+const Blog = simpleHoc(asyncComponent(() =>
   import(/* webpackChunkName: "pc/chunck/Blog" */ "./views/Blog")
-);
+),0);
 const Eidtor = asyncComponent(() =>
   import(/* webpackChunkName: "pc/chunck/Editor" */ "./views/editor")
 );
-const ArticleDetail = asyncComponent(() =>
-  import(/* webpackChunkName: "pc/chunck/Editor" */ "./views/articleDetail")
-);
-const Profile = asyncComponent(() =>
-  import(/* webpackChunkName: "pc/chunck/Editor" */ "./views/profile")
-);
+const ArticleDetail = simpleHoc(asyncComponent(() =>
+  import(/* webpackChunkName: "pc/chunck/ArticleDetail" */ "./views/articleDetail")
+),-1);
+const Profile = simpleHoc(asyncComponent(() =>
+  import(/* webpackChunkName: "pc/chunck/Profile" */ "./views/profile")
+),-1);
 export default () => {
   const [reduxState, dispatch] = useReducer(reducer, state);
   useCallback(() => {
@@ -39,7 +38,6 @@ export default () => {
       <CounterContext.Provider value={{ reduxState, dispatch }}>
         <HashRouter>
           <Switch>
-            <Route exact path="/Login" component={Login}></Route>
             <Route exact path="/Eidtor/:id?" component={Eidtor}></Route>
             <Route exact path="/post/:id?" component={ArticleDetail}></Route>
             <Route exact path="/profile/:id?" component={Profile}></Route>

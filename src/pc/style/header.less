@@ -14,9 +14,7 @@ ul{
   position: relative;
 
 
-  .ant-input-affix-wrapper {
-    box-shadow: 0 0 0 !important;
-  }
+
 
   &.hiddenHeder{
     height: 0;
@@ -46,9 +44,14 @@ ul{
       font-size: .convert(28)[@rem];
       color: @theme-color;
       margin: 0;
-      margin-right: .convert(24)[@rem];
+      padding: 0 .convert(12)[@rem];
     }
-
+    .defaultLink{
+         flex: 1;
+         font-size: .convert(16)[@rem];
+         font-weight: 500;
+         display: none;
+    }
     ul.nav {
       flex: 1;
       display: flex;
@@ -65,19 +68,37 @@ ul{
 
         &.linkActive {
           a {
-            color: #007fff !important;
+            color: @theme-color !important;
           }
         }
       }
+
+
+
+    }
+    @media screen and (max-width: 900px) {
+          ul{
+            display: none !important;
+          }
+          .defaultLink{
+            display: unset;
+          }
     }
 
     .input-wrap {
       width:  .convert(200)[@rem];
       margin-right: .convert(18)[@rem];
     }
+    @media screen and (max-width: 600px) {
+      .input-wrap{
+        display: none;
+      }
+    }
     .to-login{
       font-size: .convert(16)[@rem];
       cursor: pointer;
+      min-width: .convert(60)[@rem];
+      text-align: center;
     }
 
     .avatar {
@@ -85,7 +106,7 @@ ul{
       height: 100%;
       display: flex;
       align-items: center;
-
+      padding-right: .convert(12)[@rem];
       .options {
         min-width: .convert(160)[@rem];
         border-radius: .convert(3)[@rem];
@@ -120,10 +141,15 @@ ul{
     }
   }
 
-  
+
 }
 :global{
   .ant-modal-header{
     border-bottom: none;
   }
+
+  .ant-input-affix-wrapper {
+    box-shadow: 0 0 0 !important;
+  }
 }
+

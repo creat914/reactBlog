@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import simpleHoc from "@pc/components/addHeader";
 import profileModules from "@pc/style/profile.less";
 import { Form, Input, Button, Radio, Upload, Modal , Row, Col } from "antd";
 import ImgCrop from "antd-img-crop";
@@ -120,4 +119,4 @@ const Profile = () => {
     </div>
   );
 };
-export default simpleHoc(Profile, -1);
+export default Profile;

@@ -9,7 +9,6 @@ const simpleHoc = (WrappedComponent, local) => {
             }
             this.EventScollFunc = this.onScollFunc().bind(this)
         }
-
         //监听滚动
         onScollFunc() {
             let defaultScrollTop = 0;
