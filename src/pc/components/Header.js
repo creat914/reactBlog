@@ -126,7 +126,7 @@ const Header = (props) => {
                         style={{
                             fontSize: "21px",
                             color: match.url === "/message" ? "#007fff" : "#555",
-                            margin: "0 18px",
+                            marginRight: "10px",
                         }}
                     />
                     <div className={headerModules["to-login"]} onClick={showModal}>

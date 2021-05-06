@@ -1,36 +1,33 @@
-.hidden{
+.hidden {
   display: none;
 }
-ul{
+ul {
   margin-bottom: 0;
 }
 .header {
   width: 100%;
-  height: .convert(60)[@rem];
+  height: .convert(60) [ @rem];
   transition: all 0.3s;
-  background: #FFFFFF;
+  background: #ffffff;
   color: @theme-color;
   font-weight: 500;
   position: relative;
 
-
-
-
-  &.hiddenHeder{
+  &.hiddenHeder {
     height: 0;
     overflow: hidden;
 
-    .header-fixed{
-      top:-60px;
+    .header-fixed {
+      top: -60px;
     }
   }
-  &-fixed{
+  &-fixed {
     width: 100%;
     position: fixed;
     top: 0;
     left: 0;
-    background: #FFFFFF;
-    border-bottom: .convert(1)[@rem] solid #f1f1f1;
+    background: #ffffff;
+    border-bottom: .convert(1) [ @rem] solid #f1f1f1;
     z-index: 190;
     transition: all 0.3s;
   }
@@ -41,16 +38,18 @@ ul{
     align-items: center;
 
     h1 {
-      font-size: .convert(28)[@rem];
+      font-size: .convert(28) [ @rem];
       color: @theme-color;
       margin: 0;
-      padding: 0 .convert(12)[@rem];
+      padding: 0 .convert(12) [ @rem];
     }
-    .defaultLink{
-         flex: 1;
-         font-size: .convert(16)[@rem];
-         font-weight: 500;
-         display: none;
+
+    .defaultLink {
+      flex: 1;
+      font-size: .convert(16) [ @rem];
+      font-weight: 500;
+      display: none;
+      min-width: .convert(60)[@rem];
     }
     ul.nav {
       flex: 1;
@@ -58,9 +57,9 @@ ul{
       margin: 0;
 
       li {
-        min-width: .convert(60)[@rem];
+        min-width: .convert(60) [ @rem];
         text-align: center;
-        font-size: .convert(18)[@rem];
+        font-size: .convert(18) [ @rem];
 
         a {
           color: #909090;
@@ -72,32 +71,31 @@ ul{
           }
         }
       }
-
-
-
     }
-    @media screen and (max-width: 900px) {
-          ul{
-            display: none !important;
-          }
-          .defaultLink{
-            display: unset;
-          }
-    }
+    @media screen and (max-width: 750px) {
+      h1 {
+        font-size: .convert(22) [ @rem];
+      }
+      ul {
+        display: none !important;
+      }
+      .defaultLink {
+        display: unset;
+      }
 
-    .input-wrap {
-      width:  .convert(200)[@rem];
-      margin-right: .convert(18)[@rem];
-    }
-    @media screen and (max-width: 600px) {
-      .input-wrap{
+      .writeArtice{
         display: none;
       }
     }
-    .to-login{
-      font-size: .convert(16)[@rem];
+
+    .input-wrap {
+      width: .convert(200) [ @rem];
+      margin-right: .convert(18) [ @rem];
+    }
+    .to-login {
+      font-size: .convert(16) [ @rem];
       cursor: pointer;
-      min-width: .convert(60)[@rem];
+      padding-right: .convert(12)[@rem];
       text-align: center;
     }
 
@@ -106,45 +104,43 @@ ul{
       height: 100%;
       display: flex;
       align-items: center;
-      padding-right: .convert(12)[@rem];
+      padding-right: .convert(12) [ @rem];
       .options {
-        min-width: .convert(160)[@rem];
-        border-radius: .convert(3)[@rem];
-        border: 1px solid #CCC;
+        min-width: .convert(160) [ @rem];
+        border-radius: .convert(3) [ @rem];
+        border: 1px solid #ccc;
         position: absolute;
-        top: .convert(59)[@rem];
+        top: .convert(59) [ @rem];
         right: 0px;
         z-index: 200;
-        background: #FFFFFF;
+        background: #ffffff;
 
         ul {
-          margin: .convert(8)[@rem] 0;
+          margin: .convert(8) [ @rem] 0;
 
           li {
             color: #71777c;
-            height: .convert(30)[@rem];;
-            line-height: .convert(30)[@rem];
-            padding: 0 .convert(10)[@rem];
-            font-size: .convert(14)[@rem];
+            height: .convert(30) [ @rem];
+            line-height: .convert(30) [ @rem];
+            padding: 0 .convert(10) [ @rem];
+            font-size: .convert(14) [ @rem];
 
             &:hover {
-              background: #EBEBEB;
+              background: #ebebeb;
             }
             .iconFont {
-              fontSize: .convert(18)[@rem];
+              fontsize: .convert(18) [ @rem];
               color: #555555;
-              margin-right: .convert(10)[@rem];
+              margin-right: .convert(10) [ @rem];
             }
           }
         }
       }
     }
   }
-
-
 }
-:global{
-  .ant-modal-header{
+:global {
+  .ant-modal-header {
     border-bottom: none;
   }
 
@@ -152,4 +148,3 @@ ul{
     box-shadow: 0 0 0 !important;
   }
 }
-
