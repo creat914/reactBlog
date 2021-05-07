@@ -1,13 +1,10 @@
-import React, { useContext ,useEffect} from "react";
+import React from "react";
 import { NavLink, Link } from "react-router-dom";
-
 import { Card } from "antd";
 import { LikeFilled, MessageFilled, ForkOutlined } from "@ant-design/icons";
 import MainComp from "@pc/components/mainComp";
 import blogStyle from "@pc/style/blog.less";
-import { CounterContext } from "@pc/sotre/index";
 const Blog = (props) => {
-  const { reduxState, dispatch } = useContext(CounterContext);
   const { match } = props;
   const navList = [
     {
@@ -15,9 +12,6 @@ const Blog = (props) => {
       title: "热门",
     },
   ];
-  useEffect(() => {
-     console.log(reduxState)
-  },[]);
   const BlogList = () => {
     return (
       <Card
@@ -30,7 +24,7 @@ const Blog = (props) => {
         }
         style={{ flex: 1 }}
       >
-        {[..."12"].map((item, index) => {
+        {[..."123456789"].map((item, index) => {
           return (
             <div className={blogStyle["content-box"]} key={index}>
               <div className={blogStyle["info-box"]}>
@@ -45,7 +39,7 @@ const Blog = (props) => {
                 </ul>
                 <div className={blogStyle["info-row"]}>
                   <Link to={"/post/" + index}>
-                    让我在面试官面前结巴的24个XX和XX的区别！
+                    让我在面试官面前结巴的24个XX和XX的区别!
                   </Link>
                 </div>
                 <div className={blogStyle["action-row"]}>

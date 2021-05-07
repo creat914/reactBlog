@@ -14,17 +14,19 @@ export const reducer = (state, action) => {
   console.log(action);
   switch (action.type) {
     case SET_TOKEN:
+      localStorage.setItem('blog_token',action.token)
       return {
         ...state,
         token: action.token,
       };
     case REMOVE_TOKEN:
-      localStorage.removeItem('token')
+      localStorage.removeItem('blog_token')
       return {
         ...state,
         token: "",
       };
     case SET_USERINFO:
+      localStorage.setItem('blog_userInfo',JSON.stringify(action.userInfo))
       return {
         ...state,
         userInfo: {
@@ -32,11 +34,14 @@ export const reducer = (state, action) => {
         },
       };
     case REMOVE_USERINFO:
+      localStorage.removeItem('blog_userInfo')
       return {
         ...state,
         userInfo: {}
       };
     case RESET:
+      localStorage.removeItem('blog_token')
+      localStorage.removeItem('blog_userInfo')
       return resetState;
     default:
       return state;

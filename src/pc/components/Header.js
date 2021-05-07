@@ -1,15 +1,16 @@
-import React, {useEffect, useState, useRef} from "react";
+import React, {useEffect, useState, useRef ,useContext } from "react";
 import {NavLink, withRouter} from "react-router-dom";
-import {Input, Button, Avatar, Modal, Form, Menu, Dropdown} from "antd";
-import {DownOutlined} from '@ant-design/icons';
+import {Input, Button, Avatar, Modal, Form, Menu, Dropdown,message} from "antd";
 import {
+    DownOutlined,
     BellFilled,
     LogoutOutlined,
     FormOutlined,
     RestOutlined,
 } from "@ant-design/icons";
 import headerModules from "@pc/style/header.less";
-
+import {CounterContext} from '@pc/sotre/index'
+import {loginContext } from '@pc/sotre/loginContext'
 const layout = {
     wrapperCol: {span: 24},
 };
@@ -30,6 +31,8 @@ const Header = (props) => {
     const [visible, setVisible] = React.useState(false);
     const [confirmLoading, setConfirmLoading] = React.useState(false);
     const [modalText, setModalText] = React.useState("Content of the modal");
+    const { reduxState } = useContext(CounterContext);
+    const { login } = useContext(loginContext);
     useEffect(() => {
         const clickOption = (e) => {
             if (
@@ -66,9 +69,14 @@ const Header = (props) => {
         setVisible(false);
     };
     const onFinish = (values) => {
-        console.log("Success:", values);
+          login(values).then(()=>{
+                message.success({
+                    content:'登录成功！',
+                    duration:1000
+                })
+                handleCancel()  
+          })
     };
-
     const onFinishFailed = (errorInfo) => {
         console.log("Failed:", errorInfo);
     };
@@ -129,10 +137,7 @@ const Header = (props) => {
                             margin: "0 18px",
                         }}
                     />
-                    <div className={headerModules["to-login"]} onClick={showModal}>
-                        登录
-                    </div>
-                    {false && (
+                    {reduxState.userInfo.userId ? (
                         <div className={headerModules["avatar"]}>
                             <Avatar
                                 style={{backgroundColor: "#007fff"}}
@@ -166,8 +171,9 @@ const Header = (props) => {
                                     </li>
                                 </ul>
                             </div>
-                        </div>
-                    )}
+                        </div>)
+                         :( <div className={headerModules["to-login"]} onClick={showModal}>登录</div>)
+                    }
                 </div>
             </div>
             <Modal

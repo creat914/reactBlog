@@ -2,10 +2,16 @@ const path = require("path");
 const htmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const webpack = require("webpack");
-const {CleanWebpackPlugin} = require("clean-webpack-plugin");
+const {
+    CleanWebpackPlugin
+} = require("clean-webpack-plugin");
 // const TerserPlugin = require("terser-webpack-plugin");
-const {HotModuleReplacementPlugin} = require("webpack");
-const {VueLoaderPlugin} = require("vue-loader");
+const {
+    HotModuleReplacementPlugin
+} = require("webpack");
+const {
+    VueLoaderPlugin
+} = require("vue-loader");
 const resolve = (dir) => path.resolve(__dirname, dir);
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 module.exports = {
@@ -17,6 +23,16 @@ module.exports = {
         open: true,
         port: 8090,
         contentBase: path.join(__dirname, "dist"),
+        proxy: {
+            '/': {
+                target: 'http://127.0.0.1:8088',
+                changeOrigin:true
+                // pathRewrite: {
+                //     '^/proxy': ''
+                // }
+            },
+            // '/api': 'http://127.0.0.1:8088'
+        }
     },
     entry: {
         mobile: "./src/mobile/main",
@@ -25,7 +41,7 @@ module.exports = {
     output: {
         filename: "[name]/js/[name].[chunkhash].js",
         path: path.resolve(__dirname, "dist"),
-        chunkFilename: "[name].[chunkhash].js",
+        chunkFilename: "[name].[chunkhash].js"
     },
     optimization: {
         minimize: true,
@@ -71,7 +87,7 @@ module.exports = {
             template: "./src/pc/pc.html",
             filename: "pc/pcHtml.html",
             inject: "body",
-            chunks: ["pc", "reactBase", "chunk-vendors","chunk-common"],
+            chunks: ["pc", "reactBase", "chunk-vendors", "chunk-common"],
         }),
         new htmlWebpackPlugin({
             title: "mobile-blog",
@@ -93,40 +109,35 @@ module.exports = {
         // })
     ],
     module: {
-        rules: [
-            {
+        rules: [{
                 test: /\.vue$/,
                 loader: "vue-loader",
             },
             {
                 test: /\.(woff|woff2|eot|ttf|otf|mp3|mp4|ttf)$/,
-                use: [
-                    {
-                        loader: "file-loader",
-                        options: {
-                            name: "[path]/[name].[hash:16].[ext]",
-                            context: path.resolve(__dirname, "./src"), //过滤掉[path]的相对路径
-                            publicPath: "../",
-                            esModule: false, // 这里设置为false
-                        },
+                use: [{
+                    loader: "file-loader",
+                    options: {
+                        name: "[path]/[name].[hash:16].[ext]",
+                        context: path.resolve(__dirname, "./src"), //过滤掉[path]的相对路径
+                        publicPath: "../",
+                        esModule: false, // 这里设置为false
                     },
-                ],
+                }, ],
             },
             {
                 test: /\.(png|svg|jpe?g)$/,
-                use: [
-                    {
-                        loader: "url-loader",
-                        options: {
-                            limit: 8192,
-                            name: "[path]/[name].[hash:16].[ext]",
-                            fallback: "file-loader", // 当超过8192byte时，会回退使用file-loader
-                            context: path.resolve(__dirname, "./src"), //过滤掉[path]的相对路径
-                            publicPath: "../",
-                            esModule: false,
-                        },
+                use: [{
+                    loader: "url-loader",
+                    options: {
+                        limit: 8192,
+                        name: "[path]/[name].[hash:16].[ext]",
+                        fallback: "file-loader", // 当超过8192byte时，会回退使用file-loader
+                        context: path.resolve(__dirname, "./src"), //过滤掉[path]的相对路径
+                        publicPath: "../",
+                        esModule: false,
                     },
-                ],
+                }, ],
             },
             {
                 test: /\.css$/,

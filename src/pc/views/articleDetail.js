@@ -9,7 +9,7 @@ import mermaid from "@bytemd/plugin-mermaid";
 import math from "@bytemd/plugin-math";
 import highlight from "@bytemd/plugin-highlight";
 import footnotes from "@bytemd/plugin-footnotes";
-import "@/pc/style/detail.less";
+import "@pc/style/detail.less";
 import {
     gfmLanguage,
     mathLanguage,

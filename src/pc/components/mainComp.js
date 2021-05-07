@@ -1,7 +1,11 @@
-import React, { useEffect } from "react";
-import { Carousel, Form, Input, Button } from "antd";
+import React, { useEffect,useContext } from "react";
+import {CounterContext} from '@pc/sotre/index'
+import { Carousel, Form, Input, Button ,message } from "antd";
 import mainComp from "@pc/style/mainComp.less";
+import {loginContext} from '@pc/sotre/loginContext'
 const MainComp = (props) => {
+  const { reduxState } = useContext(CounterContext)
+  const { login } = useContext(loginContext);
   useEffect(() => {
     const moreBox = document.querySelector(`.${mainComp.moreBox}`);
     var io = new IntersectionObserver((entries) => {
@@ -24,9 +28,14 @@ const MainComp = (props) => {
   const tailLayout = {
     wrapperCol: { span: 24 },
   };
-
   const onFinish = (values) => {
-    console.log("Success:", values);
+     login(values).then(()=>{
+      message.success({
+          content:'登录成功！',
+          duration:1000
+      })
+      handleCancel()  
+    })
   };
 
   const onFinishFailed = (errorInfo) => {
@@ -38,7 +47,7 @@ const MainComp = (props) => {
       <div className={props.tagsBar ? [`${mainComp["blog-session"]}`,`${ mainComp["hasTags"]}`].join(' ') : mainComp["blog-session"]}>
         <div className={mainComp['blog-session-list']}>{props.list}</div>
         <div className={mainComp['blog-session-aside']}>
-          <div className={mainComp.unLogin}>
+          {!reduxState.userInfo.userId  && <div className={mainComp.unLogin}>
             <p>登录即可体验发表文章，查看关注等功能</p>
             <Form
               {...layout}
@@ -70,7 +79,7 @@ const MainComp = (props) => {
                 </Button>
               </Form.Item>
             </Form>
-          </div>
+          </div>}
           <Carousel autoplay>
             <img src={require("@pc/assets/2045435.jpg")} />
             <img src={require("@pc/assets/2025986.jpg")} />
