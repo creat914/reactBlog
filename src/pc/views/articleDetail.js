@@ -48,7 +48,7 @@ const articleDetail = () => {
                 // 如果对应id的锚点存在，就跳转到锚点
                 if (anchorElement) {
                     document.documentElement.scroll({
-                        top: anchorElement.offsetTop - 70, // 60 是头部导航栏的高度
+                        top: anchorElement.offsetTop - 70, // 70 是头部导航栏的高度
                         left: 0,
                         behavior: 'smooth' //滚动条平滑滚动
                     });

@@ -111,7 +111,7 @@ const Header = (props) => {
                     </h1>
                     <Dropdown overlay={menu} trigger={['click']}>
                         <a className={["ant-dropdown-link",headerModules['defaultLink']].join(' ')} onClick={e => e.preventDefault()}>
-                            {NavList[props.local]} <DownOutlined />
+                            {NavList[props.local == -1 ? 0 : props.local]}<DownOutlined />
                         </a>
                     </Dropdown>
                     <ul className={headerModules["nav"]}>
@@ -121,11 +121,13 @@ const Header = (props) => {
                     </ul>
                     <div className={headerModules["input-wrap"]}>
                         <Search
-                            placeholder="作者/标题"
+                            placeholder="标题"
                             onSearch={onSearch}
                             enterButton
                             allowClear
+                            className={headerModules['pc-search']}
                         />
+                        <Input placeholder="标题" className={headerModules['mobile-search']} onPressEnter={onSearch}/>
                     </div>
                     <Button type="primary" className={headerModules["writeArtice"]}>
                         <NavLink to="/Eidtor">写文章</NavLink>
@@ -215,8 +217,6 @@ const Header = (props) => {
                     </Form.Item>
                 </Form>
             </Modal>
-
-
         </header>
     );
 };

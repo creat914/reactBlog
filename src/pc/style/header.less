@@ -1,9 +1,11 @@
 .hidden {
   display: none;
 }
+
 ul {
   margin-bottom: 0;
 }
+
 .header {
   width: 100%;
   height: .convert(60) [ @rem];
@@ -21,6 +23,7 @@ ul {
       top: -60px;
     }
   }
+
   &-fixed {
     width: 100%;
     position: fixed;
@@ -31,6 +34,7 @@ ul {
     z-index: 190;
     transition: all 0.3s;
   }
+
   &-container {
     .headerWith();
     height: 60px;
@@ -51,6 +55,7 @@ ul {
       display: none;
       min-width: .convert(60)[@rem];
     }
+
     ul.nav {
       flex: 1;
       display: flex;
@@ -67,31 +72,51 @@ ul {
 
         &.linkActive {
           a {
-            color: @theme-color !important;
+            color: @theme-color  !important;
           }
         }
       }
     }
-    @media screen and (max-width: 750px) {
-      h1 {
-        font-size: .convert(22) [ @rem];
-      }
-      ul {
-        display: none !important;
-      }
-      .defaultLink {
-        display: unset;
-      }
-
-      .writeArtice{
-        display: none;
-      }
+    .writeArtice {
+      margin-right: .convert(10)[@rem];
     }
 
     .input-wrap {
       width: .convert(200) [ @rem];
       margin-right: .convert(18) [ @rem];
+
+      .mobile-search {
+        display: none;
+      }
     }
+
+    @media screen and (max-width: 750px) {
+      h1 {
+        font-size: .convert(22) [ @rem];
+      }
+
+      ul {
+        display: none !important;
+      }
+
+      .defaultLink {
+        display: unset;
+      }
+
+      .pc-search {
+        display: none;
+      }
+
+      .mobile-search {
+        display: unset !important;
+      }
+
+      .writeArtice {
+        display: none;
+      }
+    }
+
+
     .to-login {
       font-size: .convert(16) [ @rem];
       cursor: pointer;
@@ -105,6 +130,7 @@ ul {
       display: flex;
       align-items: center;
       padding-right: .convert(12) [ @rem];
+
       .options {
         min-width: .convert(160) [ @rem];
         border-radius: .convert(3) [ @rem];
@@ -128,6 +154,7 @@ ul {
             &:hover {
               background: #ebebeb;
             }
+
             .iconFont {
               fontsize: .convert(18) [ @rem];
               color: #555555;
@@ -139,6 +166,7 @@ ul {
     }
   }
 }
+
 :global {
   .ant-modal-header {
     border-bottom: none;

@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState, useMemo} from "react";
-import {Button, Avatar, Tooltip} from "antd";
+import {Button, Avatar, Tooltip, message} from "antd";
 import {LogoutOutlined, FormOutlined, RestOutlined, HomeOutlined} from "@ant-design/icons";
 import {Editor} from "@bytemd/react";
 import gemoji from "@bytemd/plugin-gemoji";
@@ -21,6 +21,8 @@ import "bytemd/dist/index.min.css";
 import eiditorModules from "@pc/style/eiditor.less";
 import "highlight.js/styles/arduino-light.css";
 import themeNameList from "@pc/utils/themeName";
+import {post} from '@pc/utils/apiConfig'
+import {fileAside} from '@pc/config/baseUrl'
 // 将懒加载的样式文件存储起来
 let themeList = {};
 themeNameList.forEach(item => {
@@ -91,11 +93,7 @@ const editor = (props) => {
             <header className={eiditorModules["header"]}>
                 <div className={eiditorModules["header-fixed"]}>
                     <div className={eiditorModules["header-container"]}>
-                        <div
-                            onClick={() => {
-                                uploadBox.current.onClick;
-                            }}
-                        >
+                        <div>
                             <Tooltip placement="bottomLeft" title="点击上传封面图">
                                 <label htmlFor="uploadInput" style={{display: "table"}}>
                                     <img
@@ -108,20 +106,30 @@ const editor = (props) => {
                                 type="file"
                                 style={{display: "none"}}
                                 ref={uploadBox}
-                                id={eiditorModules["uploadInput"]}
+                                id="uploadInput"
                                 onChange={() => {
                                     let file = uploadBox.current.files[0];
-                                    setThumeImg(file);
-                                    var reader = new FileReader();
-                                    //使用该对象读取file文件
-                                    reader.readAsDataURL(file);
-                                    //读取文件成功后执行的方法函数
-                                    reader.onload = function (e) {
-                                        //读取成功后返回的一个参数e，整个的一个进度事件
-                                        //选择所要显示图片的img，要赋值给img的src就是e中target下result里面
-                                        //的base64编码格式的地址
-                                        document.querySelector('.upload-box').src = e.target.result
-                                    };
+                                    var formData = new FormData();
+                                    formData.append("singleFile", file,file.name);
+                                    post('/api/uploadSingle',formData,true).then(res=>{
+                                           message.success({
+                                               content:"上传成功",
+                                               duration:200
+                                           })
+                                           document.querySelector(`.${eiditorModules["upload-box"]}`).src = fileAside(res);
+                                    }).catch(e=>{
+                                          
+                                    })
+                                    // var reader = new FileReader();
+                                    // //使用该对象读取file文件
+                                    // reader.readAsDataURL(file);
+                                    // //读取文件成功后执行的方法函数
+                                    // reader.onload = function (e) {
+                                    //     //读取成功后返回的一个参数e，整个的一个进度事件
+                                    //     //选择所要显示图片的img，要赋值给img的src就是e中target下result里面
+                                    //     //的base64编码格式的地址
+                                    // document.querySelector(`.${eiditorModules["upload-box"]}`).src = e.target.result
+                                    // };
                                 }}
                             />
                         </div>
