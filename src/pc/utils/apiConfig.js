@@ -29,17 +29,11 @@ api.interceptors.response.use(response => {
         if (data.code == 200) {
             return data.data
         } else if (data.code == 400) {
-            message.error({
-                content: data.msg,
-                duration: 1000
-            });
+            message.error(data.msg);
             return Promise.reject(data.msg)
         } else if (data.code == 401) {
             localStorage.removeItem('blog_token');
-            message.error({
-                content: data.msg,
-                duration: 1000
-            });;
+            message.error(data.msg);
             return Promise.reject(data.msg)
         }
     }

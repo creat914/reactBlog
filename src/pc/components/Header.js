@@ -70,10 +70,7 @@ const Header = (props) => {
     };
     const onFinish = (values) => {
           login(values).then(()=>{
-                message.success({
-                    content:'登录成功！',
-                    duration:1000
-                })
+                message.success('登录成功')
                 handleCancel()  
           })
     };
