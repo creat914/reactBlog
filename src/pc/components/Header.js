@@ -108,7 +108,7 @@ const Header = (props) => {
                     </h1>
                     <Dropdown overlay={menu} trigger={['click']}>
                         <a className={["ant-dropdown-link",headerModules['defaultLink']].join(' ')} onClick={e => e.preventDefault()}>
-                            {NavList[props.local == -1 ? 0 : props.local]}<DownOutlined />
+                            {NavList[props.local == -1 ? 0 : props.local]}<DownOutlined style={{marginLeft:'5px'}}/>
                         </a>
                     </Dropdown>
                     <ul className={headerModules["nav"]}>
@@ -171,7 +171,8 @@ const Header = (props) => {
                                 </ul>
                             </div>
                         </div>)
-                         :( <div className={headerModules["to-login"]} onClick={showModal}>登录</div>)
+                         :( 
+                            <Button type="defult"  onClick={showModal} className={headerModules['to-login']}>登录</Button>)
                     }
                 </div>
             </div>

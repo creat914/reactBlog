@@ -9,6 +9,7 @@ import mermaid from "@bytemd/plugin-mermaid";
 import math from "@bytemd/plugin-math";
 import highlight from "@bytemd/plugin-highlight";
 import footnotes from "@bytemd/plugin-footnotes";
+import { getArticleDetail } from '@pc/apis/blogApis'
 import "@pc/style/detail.less";
 import {
     gfmLanguage,
@@ -16,25 +17,39 @@ import {
     mermaidLanguage,
 } from "@pc/config/editConfig.js";
 
-const articleDetail = () => {
-    const [value, setValue] = useState("");
+const articleDetail = (props) => {
+    const [value, setValue] = useState({});
     const [menu, setMenu] = useState([]);
     useEffect(() => {
         let themeStyle = document.createElement("style");
         document.head.appendChild(themeStyle);
-        let selStyle = localStorage.selStyle;
-        if (selStyle) {
-            import(`../ThemeStyle/${selStyle}Theme.js`).then(
-                ({default: styleName}) => {
-                    themeStyle.innerHTML = styleName;
-                    let editorText = localStorage.editorText;
-                    editorText && setValue(editorText);
-                }
-            );
-        } else {
-            let editorText = localStorage.editorText;
-            editorText && setValue(editorText);
-        }
+        getArticleDetail({
+            articleId:props.match.params.id
+        }).then(res=>{
+              if (res.articleTheme) {
+                    import(`../ThemeStyle/${res.articleTheme}Theme.js`).then(
+                        ({default: styleName}) => {
+                            themeStyle.innerHTML = styleName;
+                            setValue(res)
+                        }
+                    );
+              } 
+        })
+        // let themeStyle = document.createElement("style");
+        // document.head.appendChild(themeStyle);
+        // let selStyle = localStorage.selStyle;
+        // if (selStyle) {
+        //     import(`../ThemeStyle/${selStyle}Theme.js`).then(
+        //         ({default: styleName}) => {
+        //             themeStyle.innerHTML = styleName;
+        //             let editorText = localStorage.editorText;
+        //             editorText && setValue(editorText);
+        //         }
+        //     );
+        // } else {
+        //     let editorText = localStorage.editorText;
+        //     editorText && setValue(editorText);
+        // }
         return () => {
             document.head.removeChild(themeStyle);
         };
@@ -105,7 +120,13 @@ const articleDetail = () => {
         );
     }, [menu]);
     const ViewerBox = useCallback(() => {
-        return <Viewer value={value} plugins={plugins}/>;
+        return (
+            <div className="detail-box">
+               <img className="thumImg" src={value.articleCoverImg}/>
+               <h1 className="title">{value.articleTitle}</h1>
+               <Viewer value={value.articleContent} plugins={plugins}/>
+            </div>
+        )
     }, [value]);
     return <MainComp list={<ViewerBox/>} aside={<MeunListBox/>}/>;
 };

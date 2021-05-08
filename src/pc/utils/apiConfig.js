@@ -47,7 +47,7 @@ api.interceptors.response.use(response => {
  */
 export function get(url, params) {
     if (params) {
-        url = url + "&" + qs.stringify(params)
+        url = url + "?" + qs.stringify(params)
     }
     return api.get(url);
 }

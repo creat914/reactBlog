@@ -1,17 +1,35 @@
-import React from "react";
+import React,{useEffect,useState} from "react";
 import { NavLink, Link } from "react-router-dom";
 import { Card } from "antd";
 import { LikeFilled, MessageFilled, ForkOutlined } from "@ant-design/icons";
 import MainComp from "@pc/components/mainComp";
 import blogStyle from "@pc/style/blog.less";
+import {getArticleList} from '@pc/apis/blogApis'
 const Blog = (props) => {
   const { match } = props;
+  const [articleList,setArticle] = useState([])
+  const [page,setPage] = useState(0)
+  const [loading,setLoading] = useState(false)
   const navList = [
     {
       key: "host",
-      title: "热门",
+      title: "推荐",
     },
   ];
+  useEffect(()=>{
+        if(page){
+          setLoading(true)
+          getArticleList({
+             page
+          }).then(res=>{
+              if(page == 1 ){
+                  setArticle(res)
+              }else{
+                  setArticle(articleList.concat(res))
+              }
+          })
+        }
+  },[page])
   const BlogList = () => {
     return (
       <Card
@@ -24,13 +42,13 @@ const Blog = (props) => {
         }
         style={{ flex: 1 }}
       >
-        {[..."123456789"].map((item, index) => {
+        {articleList.map((item, index) => {
           return (
             <div className={blogStyle["content-box"]} key={index}>
               <div className={blogStyle["info-box"]}>
                 <ul className={blogStyle["meta-list"]}>
                   <li>
-                    <a href="">作者</a>
+                    <a href="">{item.nickname}</a>
                   </li>
                   <li>13个小时</li>
                   <li>
@@ -38,19 +56,19 @@ const Blog = (props) => {
                   </li>
                 </ul>
                 <div className={blogStyle["info-row"]}>
-                  <Link to={"/post/" + index}>
-                    让我在面试官面前结巴的24个XX和XX的区别!
+                  <Link to={"/post/" + item.articleId} target="_blank">
+                    {item.articleTitle}
                   </Link>
                 </div>
                 <div className={blogStyle["action-row"]}>
                   <ul>
                     <li title="点赞">
                       <LikeFilled style={{ color: "#b2bac2" }} />
-                      <span className={blogStyle["count"]}>12</span>
+                      <span className={blogStyle["count"]}>{item.likeCount}</span>
                     </li>
                     <li title="吐糟">
                       <MessageFilled style={{ color: "#b2bac2" }} />
-                      <span className={blogStyle["count"]}>14</span>
+                      <span className={blogStyle["count"]}>{item.commentCount}</span>
                     </li>
                     <li title="分享">
                       <ForkOutlined style={{ color: "#b2bac2" }} />
@@ -60,7 +78,7 @@ const Blog = (props) => {
               </div>
               <img
                 className={blogStyle["thumb"]}
-                src={require("../assets/2045435.jpg")}
+                src={item.articleCoverImg}
               />
             </div>
           );
@@ -90,15 +108,17 @@ const Blog = (props) => {
     return <div></div>;
   };
   const getMoreDate = () => {
-    console.log("到达底部了");
+      if(!loading){
+         setPage(page+1)
+      }
   };
   return (
-    <MainComp
-      list={<BlogList />}
-      aside={<BlogAside />}
-      tagsBar={<BlogTags />}
-      getMoreDate={getMoreDate}
-    />
+          <MainComp
+          list={<BlogList />}
+          aside={<BlogAside />}
+          tagsBar={<BlogTags />}
+          getMoreDate={getMoreDate}
+        />
   );
 };
 export default Blog;

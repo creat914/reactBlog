@@ -26,7 +26,7 @@ import "bytemd/dist/index.min.css";
 import eiditorModules from "@pc/style/eiditor.less";
 import "highlight.js/styles/arduino-light.css";
 import themeNameList from "@pc/utils/themeName";
-import { post } from "@pc/utils/apiConfig";
+import { uploadSingle,uploadFileList,addArticle} from '@pc/apis/blogApis'
 import { fileAside } from "@pc/config/baseUrl";
 // 将懒加载的样式文件存储起来
 let themeList = {};
@@ -96,6 +96,17 @@ const editor = (props) => {
   useEffect(() => {
     nowState.current = state;
   });
+  // 保存文章
+  const addArticleFun =async ()=>{
+    await addArticle({thumkImg:thumeImg, articleTitle:titleInput.current.value,articleContent:value, articleTheme:selStyle})
+    message.success('发布成功')
+    setValue("")
+    setThumeImg("")
+    document.querySelector(
+     `.${eiditorModules["upload-box"]}`
+   ).src = ""
+    titleInput.current.value = ""
+  }
   return (
     <div className={eiditorModules["editor-wraper"]}>
       <header className={eiditorModules["header"]}>
@@ -115,17 +126,16 @@ const editor = (props) => {
                 style={{ display: "none" }}
                 ref={uploadBox}
                 id="uploadInput"
-                onChange={() => {
+                onChange={async () => {
                   let file = uploadBox.current.files[0];
                   var formData = new FormData();
                   formData.append("singleFile", file, file.name);
-                  post("/api/uploadSingle", formData, true).then((res) => {
-                    message.success("上传成功");
-                    document.querySelector(
-                      `.${eiditorModules["upload-box"]}`
-                    ).src = fileAside(res);
-                    setThumeImg(fileAside(res));
-                  });
+                  let res = await uploadSingle(formData)
+                  message.success("上传成功");
+                  document.querySelector(
+                    `.${eiditorModules["upload-box"]}`
+                  ).src = fileAside(res);
+                  setThumeImg(fileAside(res));
                   // var reader = new FileReader();
                   // //使用该对象读取file文件
                   // reader.readAsDataURL(file);
@@ -148,17 +158,7 @@ const editor = (props) => {
             <Button
               type="primary"
               className="writeArtice"
-              onClick={() => {
-                  post('/api/saveArticle',{
-                    thumkImg:thumeImg,
-                    articleTitle:titleInput.current.value,
-                    articleContent:value,
-                    articleTheme:selStyle
-                  }).then(res=>{
-
-                  })
-              }}
-            >
+              onClick={addArticleFun}>
               发布文章
             </Button>
             <div className={eiditorModules["avatar"]}>
@@ -210,27 +210,26 @@ const editor = (props) => {
           setValue(v);
         }}
         uploadImages={async (files) => {
-          let uploadList = [];
-          try {
+          return new Promise(resovle=>{
+            let uploadList = [];
             let formData = new FormData();
             for (let i = 0; i < files.length; i++) {
               formData.append("multerFile", files[i], files[i].name);
             }
-            let res = await post("/api/uploadMulter", formData, true);
-            uploadList = res.map((item) => {
-              return {
-                url: item.path,
-              };
+            uploadFileList(formData).then(res=>{
+              uploadList = res.map(item => {
+                return {
+                    url: fileAside(item.path)
+                }
+               });
+               return resovle(uploadList);
+            }).catch(()=>{
+               return resovle(uploadList);
             });
-          } catch (e) {}
-          return Promise.resolve(uploadList);
-          // .then(res=>{
-          //     setThumeImg(fileAside(res))
-          // });
+          })
         }}
       />
     </div>
   );
 };
-
 export default editor;

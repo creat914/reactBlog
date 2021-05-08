@@ -23,5 +23,6 @@ export default [{
     component: Profile
 }, {
     path: '/:path?',
-    component: Blog
+    component: Blog,
+    cache:true
 }]

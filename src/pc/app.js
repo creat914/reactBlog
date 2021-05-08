@@ -1,6 +1,7 @@
 import "antd/dist/antd.css"; // or 'antd/dist/antd.less'
 import React,{useReducer , useEffect } from "react";
 import { HashRouter, Route, Switch } from "react-router-dom";
+import {KeepaliveRouterSwitch,KeepaliveRoute ,addKeeperListener  } from 'react-keepalive-router'
 import "@/flexible";
 import "@pc/reset.less";
 import {
@@ -20,20 +21,27 @@ export default () => {
     let userInfo = localStorage.getItem("blog_userInfo");
     dispatch({ type: SET_TOKEN, token: token || "" });
     dispatch({ type: SET_USERINFO, userInfo: JSON.parse(userInfo || "{}") });
+     /* 增加缓存监听器 */
+    //  addKeeperListener((history,cacheKey)=>{
+    //   if(history)console.log('当前激活状态缓存组件：'+ cacheKey )
+    // })
   }, []);
   return (
     <div className="root-wrap">
       <CounterContext.Provider value={{ reduxState, dispatch }}>
         <HashRouter>
-          <Switch>
+          {/* <KeepaliveRouterSwitch> */}
+            <Switch>
             {
-              routes.map(({component,path},index)=>{
+              routes.map(({component,path,cache},index)=>{
                 return (
-                  <Route exact path={path} component={component} key={index}></Route>
+                  //  cache? <KeepaliveRoute path={path} component={ component } key={index}></KeepaliveRoute>:
+                   <Route exact path={path} component={component} key={index}></Route>
                 )
               })
             }
-          </Switch>
+            </Switch>
+          {/* </KeepaliveRouterSwitch> */}
         </HashRouter>
       </CounterContext.Provider>
     </div>
