@@ -1,12 +1,14 @@
 import React, {useEffect, useState, useRef ,useContext } from "react";
-import {NavLink, withRouter} from "react-router-dom";
+import {NavLink, useHistory ,useRouteMatch} from "react-router-dom";
 import {Input, Button, Avatar, Modal, Form, Menu, Dropdown,message} from "antd";
+import { menuOption } from '@pc/config/headOption'
 import {
     DownOutlined,
     BellFilled,
     LogoutOutlined,
     FormOutlined,
     RestOutlined,
+    UserOutlined
 } from "@ant-design/icons";
 import headerModules from "@pc/style/header.less";
 import {CounterContext} from '@pc/sotre/index'
@@ -22,7 +24,9 @@ const tailLayout = {
 const {Search} = Input;
 const NavList = ['首页']
 const Header = (props) => {
-    const {match} = props;
+    window.router = useHistory();
+    const match = useRouteMatch();
+    const history = useHistory()
     const onSearch = (value) => console.log(value);
     const [state, setState] = useState(false);
     // const [hideenTop, setHideenTop] = useState(false);
@@ -31,7 +35,7 @@ const Header = (props) => {
     const [visible, setVisible] = React.useState(false);
     const [confirmLoading, setConfirmLoading] = React.useState(false);
     const [modalText, setModalText] = React.useState("Content of the modal");
-    const { reduxState } = useContext(CounterContext);
+    const { reduxState,dispatch } = useContext(CounterContext);
     const { login } = useContext(loginContext);
     useEffect(() => {
         const clickOption = (e) => {
@@ -100,7 +104,7 @@ const Header = (props) => {
                     <h1
                         onClick={() => {
                             if (!match.url === "/") {
-                                props.history.redirect("/");
+                                history.redirect("/");
                             }
                         }}
                     >
@@ -126,8 +130,16 @@ const Header = (props) => {
                         />
                         <Input placeholder="标题" className={headerModules['mobile-search']} onPressEnter={onSearch}/>
                     </div>
-                    <Button type="primary" className={headerModules["writeArtice"]}>
-                        <NavLink to="/Eidtor">写文章</NavLink>
+                    <Button type="primary" className={headerModules["writeArtice"]} onClick={
+                        ()=>{
+                            console.log(props)
+                            history.push({
+                                pathname:'/Eidtor'
+                            })
+                        }
+                    }>
+                        写文章
+                        {/* <NavLink to="/Eidtor">写文章</NavLink> */}
                     </Button>
                     <BellFilled
                         style={{
@@ -156,15 +168,19 @@ const Header = (props) => {
                                 }
                             >
                                 <ul className={headerModules["option"]}>
-                                    <li>
+                                    <li onClick={menuOption['write']}>
                                         <FormOutlined className={headerModules["iconFont"]}/>{" "}
                                         写文章
                                     </li>
-                                    <li>
+                                    <li onClick={menuOption['write']}>
                                         <RestOutlined className={headerModules["iconFont"]}/>{" "}
                                         草稿箱
                                     </li>
-                                    <li>
+                                    <li onClick={()=>menuOption['Profile'](reduxState.userInfo.userId)}>
+                                        <UserOutlined className={headerModules["iconFont"]}/>{" "}
+                                        个人资料
+                                    </li>
+                                    <li onClick={()=>menuOption['loginout'](dispatch)}>
                                         <LogoutOutlined className={headerModules["iconFont"]}/>{" "}
                                         退出登录
                                     </li>
@@ -219,4 +235,4 @@ const Header = (props) => {
     );
 };
 
-export default withRouter(Header);
+export default Header;

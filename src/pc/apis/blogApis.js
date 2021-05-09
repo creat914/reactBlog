@@ -11,6 +11,12 @@ import {
 export const loginFunc = (params) => {
     return post('/login', params)
 }
+
+//退出登录
+export const loginOut = ()=>{
+    return post('/loginout');
+}
+
 /**
  * 增加文章
  * @param {*} params 
@@ -53,4 +59,9 @@ export const getArticleDetail = (params) =>{
  */
 export const uploadFileList = async (formData) => {
     return post('/api/uploadMulter', formData, true)
+}
+
+
+export const getUserInfo = ()=>{
+    return get('/api/userInfo');
 }

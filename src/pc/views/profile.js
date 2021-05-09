@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import profileModules from "@pc/style/profile.less";
-import { Form, Input, Button, Radio, Upload, Modal , Row, Col } from "antd";
+import { Form, Input, Button, Radio, Upload, Modal, Row, Col } from "antd";
 import ImgCrop from "antd-img-crop";
+import { getUserInfo } from "@pc/apis/blogApis";
 const formItemLayout = {
   labelCol: {
     xs: { span: 24 },
@@ -24,20 +26,39 @@ const tailFormItemLayout = {
     },
   },
 };
+
 const Profile = () => {
   const [form] = Form.useForm();
-  const [previewVisible,setPreviewVisible] = useState(false)
-  const [previewImage,setPreviewImage] = useState('')
-  const [fileList, setFileList] = useState([
-    {
-      uid: "-1",
-      name: "image.png",
-      status: "done",
-      url:
-        "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
-    },
-  ]);
-
+  const [previewVisible, setPreviewVisible] = useState(false);
+  const [previewImage, setPreviewImage] = useState("");
+  const [fileList, setFileList] = useState([]);
+  const [initialValues,setInitialValues] = useState({
+    userName:"",
+    sex:"",
+    email:"",
+    nickName:""
+  })
+  useEffect(() => {
+    getUserInfo().then((res) => {
+      console.log(res);
+      if (res.headImg) {
+        setFileList([
+          {
+            uid: Math.random(),
+            name: "头像",
+            status: "done",
+            url: res.headImg,
+          },
+        ]);
+      }
+      form.setFieldsValue({
+        userName:res.username,
+        sex:res.sex,
+        email:res.email,
+        nickName:res.nickName
+      })
+    });
+  }, []);
   const onChange = ({ fileList: newFileList }) => {
     setFileList(newFileList);
   };
@@ -49,15 +70,17 @@ const Profile = () => {
     if (!file.url && !file.preview) {
       file.preview = await getBase64(file.originFileObj);
     }
-     setPreviewImage(file.url || file.preview)
-     setPreviewVisible(true)
+    setPreviewImage(file.url || file.preview);
+    setPreviewVisible(true);
   };
   return (
     <div className={profileModules.profile}>
       <div className={profileModules.container}>
         <h2>修改个人资料</h2>
-        <Row style={{height:'120px',display:'flex',alignItems:"center"}}>
-          <Col span={3} style={{fontSize:"14px",textAlign:"right"}}>上传头像：</Col>
+        <Row style={{ height: "120px", display: "flex", alignItems: "center" }}>
+          <Col span={3} style={{ fontSize: "14px", textAlign: "right" }}>
+            上传头像：
+          </Col>
           <Col span={20}>
             <ImgCrop rotate modalTitle="裁剪头像">
               <Upload
@@ -88,6 +111,7 @@ const Profile = () => {
           name="changeInfo"
           onFinish={onFinish}
           scrollToFirstError
+          initialValues={initialValues}
         >
           <Form.Item
             name="userName"
