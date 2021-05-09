@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
 import profileModules from "@pc/style/profile.less";
-import { Form, Input, Button, Radio, Upload, Modal, Row, Col } from "antd";
+import { Form, Input, Button, Radio, Upload, Modal, Row, Col, message } from "antd";
 import ImgCrop from "antd-img-crop";
-import { getUserInfo } from "@pc/apis/blogApis";
+import { getUserInfo, uploadSingle,updateUserInfo } from "@pc/apis/blogApis";
 const formItemLayout = {
   labelCol: {
     xs: { span: 24 },
@@ -32,12 +31,12 @@ const Profile = () => {
   const [previewVisible, setPreviewVisible] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [fileList, setFileList] = useState([]);
-  const [initialValues,setInitialValues] = useState({
-    userName:"",
-    sex:"",
-    email:"",
-    nickName:""
-  })
+  const [initialValues, setInitialValues] = useState({
+    userName: "",
+    sex: "",
+    email: "",
+    nickName: "",
+  });
   useEffect(() => {
     getUserInfo().then((res) => {
       console.log(res);
@@ -52,18 +51,24 @@ const Profile = () => {
         ]);
       }
       form.setFieldsValue({
-        userName:res.username,
-        sex:res.sex,
-        email:res.email,
-        nickName:res.nickName
-      })
+        userName: res.username,
+        sex: res.sex,
+        email: res.email,
+        nickName: res.nickname,
+      });
     });
   }, []);
   const onChange = ({ fileList: newFileList }) => {
     setFileList(newFileList);
   };
   const onFinish = (values) => {
-    console.log("Received values of form: ", values);
+     let userInfo = {
+        ...values,
+        headImg:fileList[0].url
+     }
+     updateUserInfo(userInfo).then(res=>{
+        message.success('更新成功!')
+     })
   };
   const handleCancel = () => setPreviewVisible(false);
   const handlePreview = async (file) => {
@@ -76,20 +81,36 @@ const Profile = () => {
   return (
     <div className={profileModules.profile}>
       <div className={profileModules.container}>
-        <h2>修改个人资料</h2>
+        {/* <h2>修改个人资料</h2> */}
         <Row style={{ height: "120px", display: "flex", alignItems: "center" }}>
-          <Col span={3} style={{ fontSize: "14px", textAlign: "right" }}>
-            上传头像：
+          <Col span={3}
+          sm={3}
+          xs={24}
+          className={profileModules['uploadHead']}
+          style={{ fontSize: "14px", textAlign: "right",paddingBottom:'8px'}}>
+            头像：
           </Col>
-          <Col span={20}>
+          <Col  xs={24} sm={18}>
             <ImgCrop rotate modalTitle="裁剪头像">
               <Upload
-                action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
                 listType="picture-card"
                 fileList={fileList}
                 onChange={onChange}
                 onPreview={handlePreview}
                 style={{ width: "50px" }}
+                beforeUpload={(file, fileList) => {
+                  let formData = new FormData();
+                  formData.append("singleFile", file, file.name);
+                  uploadSingle(formData).then((res) => {
+                    setFileList([{
+                      uid: Math.random(),
+                      name: "头像",
+                      status: "done",
+                      url: res
+                    }]);
+                  });
+                  return false;
+                }}
               >
                 {fileList.length < 1 && "+ Upload"}
               </Upload>
@@ -124,7 +145,7 @@ const Profile = () => {
             <Input />
           </Form.Item>
           <Form.Item name="sex" label="性别">
-            <Radio.Group onChange={onChange}>
+            <Radio.Group>
               <Radio value={0}>男</Radio>
               <Radio value={1}>女</Radio>
               <Radio value={-1}>未知</Radio>

@@ -65,3 +65,7 @@ export const uploadFileList = async (formData) => {
 export const getUserInfo = ()=>{
     return get('/api/userInfo');
 }
+
+export const updateUserInfo = (params)=>{
+    return post('/api/updateInfo',params)
+}
