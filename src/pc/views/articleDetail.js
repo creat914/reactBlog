@@ -1,5 +1,5 @@
-import React, {useState, useEffect, useMemo, useCallback} from "react";
-import {Viewer} from "@bytemd/react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
+import { Viewer } from "@bytemd/react";
 import MainComp from "@pc/components/mainComp.js";
 import gemoji from "@bytemd/plugin-gemoji";
 import gfm from "@bytemd/plugin-gfm";
@@ -24,16 +24,16 @@ const articleDetail = (props) => {
         let themeStyle = document.createElement("style");
         document.head.appendChild(themeStyle);
         getArticleDetail({
-            articleId:props.match.params.id
-        }).then(res=>{
-              if (res.articleTheme) {
-                    import(`../ThemeStyle/${res.articleTheme}Theme.js`).then(
-                        ({default: styleName}) => {
-                            themeStyle.innerHTML = styleName;
-                            setValue(res)
-                        }
-                    );
-              } 
+            articleId: props.match.params.id
+        }).then(res => {
+            if (res.articleTheme) {
+                import(`../ThemeStyle/${res.articleTheme}Theme.js`).then(
+                    ({ default: styleName }) => {
+                        themeStyle.innerHTML = styleName;
+                        setValue(res)
+                    }
+                );
+            }
         })
         // let themeStyle = document.createElement("style");
         // document.head.appendChild(themeStyle);
@@ -107,7 +107,7 @@ const articleDetail = (props) => {
             <div className="menuBox">
                 <h4>目录</h4>
                 <ul>
-                    {menu.map(({leave, authorName, name}, index) => {
+                    {menu.map(({ leave, authorName, name }, index) => {
                         return (
                             <li className={leave} key={authorName} key={index}
                                 onClick={() => toScrollToAnchor(`[data-id="${authorName}"]`, index)}>
@@ -122,12 +122,12 @@ const articleDetail = (props) => {
     const ViewerBox = useCallback(() => {
         return (
             <div className="detail-box">
-               <img className="thumImg" src={value.articleCoverImg}/>
-               <h1 className="title">{value.articleTitle}</h1>
-               <Viewer value={value.articleContent} plugins={plugins}/>
+                <img className="thumImg" src={value.articleCoverImg} />
+                <h1 className="title">{value.articleTitle}</h1>
+                <Viewer value={value.articleContent} plugins={plugins} />
             </div>
         )
     }, [value]);
-    return <MainComp list={<ViewerBox/>} aside={<MeunListBox/>}/>;
+    return <MainComp list={<ViewerBox />} aside={<MeunListBox />} />;
 };
 export default articleDetail;
