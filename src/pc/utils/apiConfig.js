@@ -2,11 +2,11 @@ import axios from "axios";
 import qs from "qs";
 import { baseUrl } from "@pc/config/baseUrl";
 import { message } from "antd";
-console.log(baseUrl)
 const api = axios.create({
   baseURL: baseUrl,
   timeout: 10000,
 });
+import EventBus from '@pc/utils/subscribe'
 api.interceptors.request.use(
   (config) => {
     console.log(config);
@@ -33,13 +33,12 @@ api.interceptors.response.use((response) => {
       message.error(data.msg);
       return Promise.reject(data.msg);
     } else if (data.code == 401) {
-      localStorage.removeItem("blog_token");
+      EventBus.dispatchEvent('loginout',{});  
       message.error(data.msg);
       return Promise.reject(data.msg);
     }
   }
 });
-
 /**
  * get请求
  * @param {*} url

@@ -1,6 +1,7 @@
 import "antd/dist/antd.css"; // or 'antd/dist/antd.less'
-import React,{useReducer , useEffect,useMemo } from "react";
+import React,{useReducer , useEffect } from "react";
 import { HashRouter, Route, Switch } from "react-router-dom";
+import EventBus from '@pc/utils/subscribe'
 // import {KeepaliveRouterSwitch,KeepaliveRoute ,addKeeperListener  } from 'react-keepalive-router'
 import "@/flexible";
 import "@pc/reset.less";
@@ -10,9 +11,9 @@ import {
   state,
   SET_TOKEN,
   SET_USERINFO,
+  RESET,
 } from "@pc/sotre/index";
 import routes from '@pc/routes/index'
-import history from '@pc/utils/history'
 const app =  (props) => {
   const [reduxState, dispatch] = useReducer(reducer, state);
   // 解决刷新页面的时候丢失redux
@@ -26,6 +27,11 @@ const app =  (props) => {
     //  addKeeperListener((history,cacheKey)=>{
     //   if(history)console.log('当前激活状态缓存组件：'+ cacheKey )
     // })
+    EventBus.addEventListener('loginout',function(){
+      localStorage.removeItem("blog_token")
+      localStorage.removeItem("blog_userInfo")
+      dispatch({ type: RESET, token: token || "" });
+    })
   }, []);
   return (
     <div className="root-wrap">

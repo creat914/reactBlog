@@ -11,7 +11,6 @@ export const state = {
 };
 const resetState = JSON.parse(JSON.stringify(state));
 export const reducer = (state, action) => {
-  console.log(action);
   switch (action.type) {
     case SET_TOKEN:
       localStorage.setItem('blog_token',action.token)

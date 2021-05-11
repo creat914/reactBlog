@@ -16,7 +16,6 @@ import {
     mathLanguage,
     mermaidLanguage,
 } from "@pc/config/editConfig.js";
-
 const articleDetail = (props) => {
     const [value, setValue] = useState({});
     const [menu, setMenu] = useState([]);
