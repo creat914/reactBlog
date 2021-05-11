@@ -69,3 +69,8 @@ export const getUserInfo = ()=>{
 export const updateUserInfo = (params)=>{
     return post('/api/updateInfo',params)
 }
+
+
+export const getDraftList = ()=>{
+    return get('/api/getDraft')
+}

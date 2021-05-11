@@ -12,6 +12,10 @@ const ArticleDetail = simpleHoc(asyncComponent(() =>
 const Profile = simpleHoc(asyncComponent(() =>
     import( /* webpackChunkName: "pc/chunck/Profile" */ "../views/profile")
 ), -1);
+
+const draft = simpleHoc(asyncComponent(() => 
+    import( /* webpackChunkName: "pc/chunck/draft" */ "../views/draft")
+), -1)
 export default [{
     path: '/Eidtor/:id?',
     component: Eidtor
@@ -21,8 +25,13 @@ export default [{
 }, {
     path: '/profile/:id?',
     component: Profile
-}, {
+},
+{
+    path: '/draft',
+    component: draft
+},
+{
     path: '/:path?',
     component: Blog,
-    cache:true
+    cache: true
 }]
