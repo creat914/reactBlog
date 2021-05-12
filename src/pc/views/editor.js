@@ -1,8 +1,7 @@
-import React, { useEffect, useRef, useState, useMemo } from "react";
-import { Button, Avatar, Tooltip, message } from "antd";
+import React, { useEffect, useRef, useState, useMemo, useContext } from "react";
+import { Avatar, Tooltip, message } from "antd";
 import {
   LogoutOutlined,
-  FormOutlined,
   RestOutlined,
   HomeOutlined,
 } from "@ant-design/icons";
@@ -26,8 +25,10 @@ import "bytemd/dist/index.min.css";
 import eiditorModules from "@pc/style/eiditor.less";
 import "highlight.js/styles/arduino-light.css";
 import themeNameList from "@pc/utils/themeName";
-import { uploadSingle,uploadFileList,addArticle} from '@pc/apis/blogApis'
+import { uploadSingle, uploadFileList, addArticle } from '@pc/apis/blogApis'
 import { fileAside } from "@pc/config/baseUrl";
+import { menuOption } from '@pc/config/headOption'
+import { CounterContext } from '@pc/sotre/index'
 // 将懒加载的样式文件存储起来
 let themeList = {};
 themeNameList.forEach((item) => {
@@ -38,7 +39,7 @@ themeNameList.forEach((item) => {
 });
 //存储已经加载过得样式文件
 let hasSelThemeList = {};
-const editor = (props) => {
+const editor = () => {
   const [value, setValue] = useState("");
   const [selStyle, setSelStyle] = useState("juejin");
   const themeStyle = useMemo(() => {
@@ -72,11 +73,11 @@ const editor = (props) => {
   }, []);
   const [state, setState] = useState(false);
   const [thumeImg, setThumeImg] = useState("");
-  // const [hideenTop, setHideenTop] = useState(false);
   const nowState = useRef(state);
   const uploadBox = useRef(null);
   const titleInput = useRef(null);
   const optionDom = useRef();
+  const { dispatch } = useContext(CounterContext);
   useEffect(() => {
     const clickOption = (e) => {
       if (
@@ -97,14 +98,14 @@ const editor = (props) => {
     nowState.current = state;
   });
   // 保存文章
-  const addArticleFun =async ()=>{
-    await addArticle({thumkImg:thumeImg, articleTitle:titleInput.current.value,articleContent:value, articleTheme:selStyle})
+  const addArticleFun = async () => {
+    await addArticle({ thumkImg: thumeImg, articleTitle: titleInput.current.value, articleContent: value, articleTheme: selStyle })
     message.success('发布成功')
     setValue("")
     setThumeImg("")
     document.querySelector(
-     `.${eiditorModules["upload-box"]}`
-   ).src = ""
+      `.${eiditorModules["upload-box"]}`
+    ).src = ""
     titleInput.current.value = ""
   }
   return (
@@ -155,12 +156,12 @@ const editor = (props) => {
               className={eiditorModules["titleInput"]}
               ref={titleInput}
             />
-            <Button
+            {/* <Button
               type="primary"
               className="writeArtice"
               onClick={addArticleFun}>
               发布文章
-            </Button>
+            </Button> */}
             <div className={eiditorModules["avatar"]}>
               <Avatar
                 style={{ backgroundColor: "#007fff" }}
@@ -174,25 +175,25 @@ const editor = (props) => {
                   state
                     ? eiditorModules["options"]
                     : [
-                        `${eiditorModules["options"]}`,
-                        `${eiditorModules["hidden"]}`,
-                      ].join(" ")
+                      `${eiditorModules["options"]}`,
+                      `${eiditorModules["hidden"]}`,
+                    ].join(" ")
                 }
               >
                 <ul className="option">
-                  <li>
+                  <li onClick={menuOption['goHome']}>
                     <HomeOutlined className={eiditorModules["iconFont"]} />
                     首页
                   </li>
-                  <li>
+                  {/* <li>
                     <FormOutlined className={eiditorModules["iconFont"]} />{" "}
                     写文章
-                  </li>
-                  <li>
+                  </li> */}
+                  <li onClick={menuOption['drfat']}>
                     <RestOutlined className={eiditorModules["iconFont"]} />{" "}
                     草稿箱
                   </li>
-                  <li>
+                  <li onClick={() => menuOption['loginout'](dispatch)}>
                     <LogoutOutlined className={eiditorModules["iconFont"]} />{" "}
                     退出登录
                   </li>
@@ -210,21 +211,21 @@ const editor = (props) => {
           setValue(v);
         }}
         uploadImages={async (files) => {
-          return new Promise(resovle=>{
+          return new Promise(resovle => {
             let uploadList = [];
             let formData = new FormData();
             for (let i = 0; i < files.length; i++) {
               formData.append("multerFile", files[i], files[i].name);
             }
-            uploadFileList(formData).then(res=>{
+            uploadFileList(formData).then(res => {
               uploadList = res.map(item => {
                 return {
-                    url: fileAside(item.path)
+                  url: fileAside(item.path)
                 }
-               });
-               return resovle(uploadList);
-            }).catch(()=>{
-               return resovle(uploadList);
+              });
+              return resovle(uploadList);
+            }).catch(() => {
+              return resovle(uploadList);
             });
           })
         }}

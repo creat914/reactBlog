@@ -31,7 +31,7 @@ const MainComp = (props) => {
   const onFinish = (values) => {
      login(values).then(()=>{
       message.success('登录成功')
-      handleCancel()  
+      handleCancel && handleCancel()  
     })
   };
 

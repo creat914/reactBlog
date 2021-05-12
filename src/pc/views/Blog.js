@@ -1,45 +1,75 @@
-import React,{useEffect,useState} from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink, Link } from "react-router-dom";
 import { Card } from "antd";
 import { LikeFilled, MessageFilled, ForkOutlined } from "@ant-design/icons";
 import MainComp from "@pc/components/mainComp";
 import blogStyle from "@pc/style/blog.less";
-import {getArticleList} from '@pc/apis/blogApis'
+import { getArticleList } from '@pc/apis/blogApis'
 const Blog = (props) => {
   const { match } = props;
-  const [articleList,setArticle] = useState([])
-  const [page,setPage] = useState(0)
-  const [loading,setLoading] = useState(false)
-  const navList = [
-    {
-      key: "host",
-      title: "推荐",
-    },
-  ];
-  useEffect(()=>{
-        if(page){
-          setLoading(true)
-          getArticleList({
-             page
-          }).then(res=>{
-              if(page == 1 ){
-                  setArticle(res)
-              }else{
-                  setArticle(articleList.concat(res))
-              }
-          })
+  const [articleList, setArticle] = useState([])
+  const [page, setPage] = useState(0)
+  const [loading, setLoading] = useState(false)
+  // const navList = [
+  //   {
+  //     key: "host",
+  //     title: "推荐",
+  //   },
+  // ];
+  useEffect(() => {
+    if (page) {
+      setLoading(true)
+      getArticleList({
+        page,
+        keyword: props.keyword || ''
+      }).then(res => {
+        res.map(item => {
+          console.log(new Date(item.createTime))
+        })
+        if (page == 1) {
+          setArticle(res)
+        } else {
+          setArticle(articleList.concat(res))
         }
-  },[page])
+      })
+    }
+  }, [page])
+  useEffect(() => {
+    setPage(0)
+    setTimeout(() => {
+      setPage(1)
+    }, 100)
+  }, [props.keyword])
+  const formTime = (time) => {
+    if (!time) {
+      return ""
+    }
+    console.log(new Date(time).getTime())
+    time = new Date(time).getTime() / 1000
+    let nowTime = new Date().getTime() / 1000
+    let timeDifference = nowTime - time;
+    console.log(time,nowTime,timeDifference)
+    if (timeDifference < 60) {
+        return '刚刚'
+    }else if(timeDifference > 60 && timeDifference < 3600){
+        return Math.round(timeDifference / 60) + '分钟前'
+    }else if(timeDifference > 60 * 60 && timeDifference < 60 * 60 * 24){
+        return Math.round(timeDifference / (60 * 60)) + '小时前'
+    }else{
+        return Math.round(timeDifference / (60 * 60 * 24))  + '天前'
+    }
+  }
   const BlogList = () => {
+    // title={
+    //   <div className="list-header">
+    //     {navList.map((item, index) => {
+    //       return <span key={index}>{item.title}</span>;
+    //     })}
+    //   </div>
+    // }
     return (
       <Card
-        title={
-          <div className="list-header">
-            {navList.map((item, index) => {
-              return <span key={index}>{item.title}</span>;
-            })}
-          </div>
-        }
+        title={null}
         style={{ flex: 1 }}
       >
         {articleList.map((item, index) => {
@@ -48,9 +78,9 @@ const Blog = (props) => {
               <div className={blogStyle["info-box"]}>
                 <ul className={blogStyle["meta-list"]}>
                   <li>
-                    <a href="">{item.nickname}</a>
+                    <a href="">{item.nickname || '游客' + item.userId}</a>
                   </li>
-                  <li>13个小时</li>
+                  <li>{formTime(item.createTime)}</li>
                   <li>
                     <a href="">前端</a>
                   </li>
@@ -76,10 +106,10 @@ const Blog = (props) => {
                   </ul>
                 </div>
               </div>
-              <img
+              {item.articleCoverImg && <img
                 className={blogStyle["thumb"]}
                 src={item.articleCoverImg}
-              />
+              />}
             </div>
           );
         })}
@@ -108,17 +138,17 @@ const Blog = (props) => {
     return <div></div>;
   };
   const getMoreDate = () => {
-      if(!loading){
-         setPage(page+1)
-      }
+    if (!loading) {
+      setPage(page + 1)
+    }
   };
   return (
-          <MainComp
-          list={<BlogList />}
-          aside={<BlogAside />}
-          tagsBar={<BlogTags />}
-          getMoreDate={getMoreDate}
-        />
+    <MainComp
+      list={<BlogList />}
+      aside={<BlogAside />}
+      tagsBar={<BlogTags />}
+      getMoreDate={getMoreDate}
+    />
   );
 };
 export default Blog;

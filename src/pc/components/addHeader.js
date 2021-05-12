@@ -11,6 +11,7 @@ import { loginContext } from '@pc/sotre/loginContext'
 const simpleHoc = (WrappedComponent, local) => (props) => {
     const { dispatch } = useContext(CounterContext);
     const [hideenTop, setHideenTop] = useState(false)
+    const [keyword, setKeyword] = useState('')
     const ScollFunc = useCallback(() => {
         let defaultScrollTop = 0;
         return () => {
@@ -37,6 +38,10 @@ const simpleHoc = (WrappedComponent, local) => (props) => {
                 })
             }
     },[])
+    const searchKeyWord = useCallback((keyword)=>{
+        console.log('keyword',keyword)
+          setKeyword(keyword)
+    })
     useEffect(() => {
         const EventScollFunc = ScollFunc()
         window.addEventListener('scroll', EventScollFunc);
@@ -47,8 +52,8 @@ const simpleHoc = (WrappedComponent, local) => (props) => {
     return (
           <loginContext.Provider value={{login}}>
             <div className='view-container'>
-                 <Header local={local} hideenTop={hideenTop}/>
-                 <WrappedComponent {...props}/>
+                 <Header local={local} hideenTop={hideenTop} searchKeyWord={searchKeyWord}/>
+                 <WrappedComponent {...props} keyword={keyword}/>
              </div>
           </loginContext.Provider>
     )

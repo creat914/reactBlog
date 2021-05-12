@@ -3,6 +3,7 @@
   align-items: center;
   height: .convert(50) [ @rem];
   .headerWith();
+
   ul {
     flex: 1;
     display: flex;
@@ -11,6 +12,7 @@
 
     li {
       font-size: .convert(16)[@rem];
+
       &.tagActive {
         a {
           color: @theme-color;
@@ -21,18 +23,18 @@
 }
 
 @media screen and (max-width:750px) {
-  .blog-tags-container{
+  .blog-tags-container {
     height: .convert(50)[@rem];
 
-    ul{
-      li{
+    ul {
+      li {
         font-size: .convert(14)[@rem];
       }
     }
   }
 
-  :global{
-    .ant-card-head-title{
+  :global {
+    .ant-card-head-title {
       padding: 10px 0;
     }
   }
@@ -49,12 +51,19 @@
     }
   }
 }
+
 .content-box {
   width: 100%;
   display: flex;
   overflow: hidden;
-  padding-bottom: .convert(30) [ @rem];
+  padding-top: .convert(15) [ @rem];
+  padding-bottom: .convert(15) [ @rem];
+  border-bottom: 1px solid #ebebeb;
   align-items: center;
+
+  &:last-child{
+    border-bottom: 0;
+  }
 
   .info-box {
     flex: 1;
@@ -63,9 +72,11 @@
       width: 100%;
       display: flex;
       color: #b2bac2;
+
       a {
         color: #b2bac2;
       }
+
       li:not(:last-child)::after {
         content: "·";
         margin: .convert(4) [ @rem];
@@ -76,18 +87,24 @@
         color: @theme-color;
       }
     }
+
     .info-row {
+      // height: .convert(30)[@rem];
+      line-height: .convert(30)[@rem];
+
       a {
         font-size: .convert(16) [ @rem];
         font-weight: 600;
         line-height: 2;
         color: #2e3135;
 
+
         &:hover {
           text-decoration: underline;
         }
       }
     }
+
     .action-row {
       width: 100%;
       margin-top: .convert(4) [ @rems];
@@ -95,11 +112,13 @@
       ul {
         display: flex;
         border-radius: .convert(3) [ @rem];
+
         &:hover {
           li:last-child {
             display: block;
           }
         }
+
         li {
           border: .convert(1) [ @rem] solid #edeeef;
           padding: .convert(1) [ @rem] .convert(8) [ @rem];
@@ -127,6 +146,7 @@
       }
     }
   }
+
   .thumb {
     width: .convert(100) [ @rem];
     height: .convert(70) [ @rem];
@@ -143,6 +163,7 @@
         font-weight: unset !important;
       }
     }
+
     .thumb {
       display: none;
     }

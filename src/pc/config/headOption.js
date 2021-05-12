@@ -8,6 +8,7 @@ export const menuOption = {
              dispath({
                  type:RESET
              })
+             window.router.replace('/')
          })
     },
     'goHome':()=>{
@@ -15,6 +16,9 @@ export const menuOption = {
     },
     'write':()=>{
         window.router.push('/Eidtor')
+    },
+    'drfat':()=>{
+        window.router.push('/Draft')
     },
     'Profile':(id)=>{
         window.router.push(`/Profile/${id}`)
