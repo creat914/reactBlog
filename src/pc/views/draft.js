@@ -1,21 +1,53 @@
-import React, { useEffect, useState } from 'react'
-import { getDraftList, deleteDraf } from '@pc/apis/blogApis'
+import React, { useEffect, useState, useContext } from 'react'
+import { useHistory, useParams } from 'react-router-dom'
+import { getDraftList, deleteDraf, getArticleList } from '@pc/apis/blogApis'
 import MainComp from "@pc/components/mainComp";
-import { List, Popover, Button, Spin, Modal } from 'antd'
+import { List, Popover, Button, Spin, Pagination } from 'antd'
 import { EllipsisOutlined } from '@ant-design/icons'
+import drafStyle from "@pc/style/draf.less";
+import { CounterContext } from '@pc/sotre/index'
 const Content = (props) => {
     return (
         <div style={{ display: 'flex', flexDirection: "column" }}>
-            <Button type="link">编辑内容</Button>
+            <Button type="link" onClick={() => props.toEidtor(props.articleId)}>编辑内容</Button>
             <Button type="link" danger onClick={() => props.deleteDraf(props.articleId)}>删除文章</Button>
         </div>
     )
 };
 const draft = () => {
     const [list, setList] = useState([])
-    const [UpdateDraf, setUpdateDraf] = useState(false)
     const [spinning, setSpinning] = useState(false)
+    const [page, setPage] = useState(1)
+    const [isDraf, setIsDraf] = useState(false)
+    const [total, setTotal] = useState(0)
+    const history = useHistory();
+    const params = useParams();
+    const { reduxState } = useContext(CounterContext)
     useEffect(() => {
+        let { type = 0 } = params;
+        if (type == 0) {
+            setIsDraf(false)
+            getMyArticle();
+        } else {
+            setIsDraf(true)
+            getDrafList();
+        }
+    }, [params.type])
+    const getMyArticle = (page) => {
+        console.log(page)
+        setSpinning(true)
+        getArticleList({
+            userId: reduxState.userInfo.userId,
+            page: page
+        }).then(res => {
+            setList(res.list)
+            setTotal(res.total)
+            setSpinning(false)
+        })
+    }
+    // 获取草稿箱
+    const getDrafList = () => {
+        console.log('草噶厦')
         setSpinning(true)
         getDraftList().then(res => {
             setList(res)
@@ -23,30 +55,32 @@ const draft = () => {
         }).catch(() => {
             setSpinning(false)
         })
-    }, [UpdateDraf])
-
+    }
+    // 删除草稿箱
     const deleteDrafFunc = (draftId) => {
-
         setSpinning(true)
         deleteDraf({
             draftId
         }).then(res => {
-            setTimeout(() => {
-                setUpdateDraf(!UpdateDraf)
-            }, 200)
+            setSpinning(false)
+            getDrafList()
         }).catch(() => {
             setSpinning(false)
         })
     }
-    const DrafList = () => {
-        return (
+    // 编辑文章or草稿箱
+    const toEidtor = (articleId)=>{
+        history.push('/Eidtor/'+params.type+"?articleId="+articleId)
+    }
+    const DrafList = (
+        <div className={drafStyle['draf-wrap']}>
             <Spin size="large" spinning={spinning}>
                 <List dataSource={list}
                     style={{
                         background: '#FFFFFF'
                     }}
                     header={
-                        <h1 style={{ paddingLeft: '26px', marginBottom: '0' }}>草稿箱({list.length})</h1>
+                        <h1 style={{ paddingLeft: '26px', marginBottom: '0' }}>{isDraf ? '草稿箱' : '我的文章'}</h1>
                     }
                     renderItem={item => (
                         <List.Item style={{
@@ -67,7 +101,7 @@ const draft = () => {
                                 <span>
                                     {item.createTime}
                                 </span>
-                                <Popover content={<Content articleId={item.drftId} deleteDraf={deleteDrafFunc} />} trigger="click" placement="bottomRight">
+                                <Popover content={<Content articleId={isDraf ? item.drftId : item.articleId} deleteDraf={deleteDrafFunc} toEidtor={toEidtor}/>} trigger="click" placement="bottomRight">
                                     <EllipsisOutlined style={{
                                         fontSize: '22px',
                                         marginLeft: '20px'
@@ -76,11 +110,16 @@ const draft = () => {
                             </div>
                         </List.Item>)}>
                 </List >
+                {isDraf ? null : <Pagination current={page} total={total} className={drafStyle['pagination']}
+                    onChange={(e) => {
+                        setPage(e)
+                        getMyArticle(e)
+                    }} />}
             </Spin>
-        )
-    }
+        </div>
+    )
     return (
-        <MainComp list={<DrafList />}></MainComp>
+        <MainComp list={DrafList}></MainComp>
     )
 }
 

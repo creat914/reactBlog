@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { NavLink, Link } from "react-router-dom";
 import { Card } from "antd";
 import { LikeFilled, MessageFilled, ForkOutlined } from "@ant-design/icons";
@@ -10,63 +10,47 @@ const Blog = (props) => {
   const [articleList, setArticle] = useState([])
   const [page, setPage] = useState(0)
   const [loading, setLoading] = useState(false)
-  // const navList = [
-  //   {
-  //     key: "host",
-  //     title: "推荐",
-  //   },
-  // ];
-  useEffect(() => {
-    if (page) {
-      setLoading(true)
-      getArticleList({
-        page,
-        keyword: props.keyword || ''
-      }).then(res => {
-        res.map(item => {
-          console.log(new Date(item.createTime))
-        })
+  const PageCurrent = useRef(page)
+  const LoadingCurrent = useRef(loading)
+  const getArticleListFunc = () => {
+    LoadingCurrent.current = true
+    getArticleList({
+      page,
+      keyword: props.keyword || ''
+    }).then(res => {
+      if (res.list.length) {
+        LoadingCurrent.current = false
         if (page == 1) {
-          setArticle(res)
+          setArticle(res.list)
         } else {
-          setArticle(articleList.concat(res))
+          setArticle(articleList.concat(res.list))
         }
-      })
-    }
-  }, [page])
-  useEffect(() => {
-    setPage(0)
-    setTimeout(() => {
-      setPage(1)
-    }, 100)
-  }, [props.keyword])
-  const formTime = (time) => {
+      }
+    })
+  }
+  const formTime = useCallback((time) => {
     if (!time) {
       return ""
     }
-    console.log(new Date(time).getTime())
     time = new Date(time).getTime() / 1000
     let nowTime = new Date().getTime() / 1000
     let timeDifference = nowTime - time;
-    console.log(time,nowTime,timeDifference)
     if (timeDifference < 60) {
-        return '刚刚'
-    }else if(timeDifference > 60 && timeDifference < 3600){
-        return Math.round(timeDifference / 60) + '分钟前'
-    }else if(timeDifference > 60 * 60 && timeDifference < 60 * 60 * 24){
-        return Math.round(timeDifference / (60 * 60)) + '小时前'
-    }else{
-        return Math.round(timeDifference / (60 * 60 * 24))  + '天前'
+      return '刚刚'
+    } else if (timeDifference > 60 && timeDifference < 3600) {
+      return Math.round(timeDifference / 60) + '分钟前'
+    } else if (timeDifference > 60 * 60 && timeDifference < 60 * 60 * 24) {
+      return Math.round(timeDifference / (60 * 60)) + '小时前'
+    } else {
+      return Math.round(timeDifference / (60 * 60 * 24)) + '天前'
     }
-  }
+  }, [])
+  useEffect(() => {
+    if (page > 0) {
+      getArticleListFunc();
+    }
+  }, [page])
   const BlogList = () => {
-    // title={
-    //   <div className="list-header">
-    //     {navList.map((item, index) => {
-    //       return <span key={index}>{item.title}</span>;
-    //     })}
-    //   </div>
-    // }
     return (
       <Card
         title={null}
@@ -138,8 +122,9 @@ const Blog = (props) => {
     return <div></div>;
   };
   const getMoreDate = () => {
-    if (!loading) {
-      setPage(page + 1)
+    if (!LoadingCurrent.current) {
+      PageCurrent.current++;
+      setPage(PageCurrent.current)
     }
   };
   return (
@@ -147,7 +132,7 @@ const Blog = (props) => {
       list={<BlogList />}
       aside={<BlogAside />}
       tagsBar={<BlogTags />}
-      getMoreDate={getMoreDate}
+      getMoreDate={() => getMoreDate()}
     />
   );
 };

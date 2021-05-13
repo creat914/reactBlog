@@ -20,11 +20,14 @@ const articleDetail = (props) => {
     const [value, setValue] = useState({});
     const [menu, setMenu] = useState([]);
     useEffect(() => {
+        
         let themeStyle = document.createElement("style");
         document.head.appendChild(themeStyle);
         getArticleDetail({
             articleId: props.match.params.id
         }).then(res => {
+            console.log(res.articleTitle)
+            document.title = res.articleTitle
             if (res.articleTheme) {
                 import(`../ThemeStyle/${res.articleTheme}Theme.js`).then(
                     ({ default: styleName }) => {

@@ -27,7 +27,7 @@ export default [{
     component: Profile
 },
 {
-    path: '/draft',
+    path: '/draft/:type?',
     component: draft
 },
 {

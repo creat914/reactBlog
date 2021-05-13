@@ -8,7 +8,8 @@ import {
     LogoutOutlined,
     FormOutlined,
     RestOutlined,
-    UserOutlined
+    UserOutlined,
+    ReadOutlined
 } from "@ant-design/icons";
 import headerModules from "@pc/style/header.less";
 import { CounterContext } from '@pc/sotre/index'
@@ -182,7 +183,11 @@ const Header = (props) => {
                                         <FormOutlined className={headerModules["iconFont"]} />{" "}
                                         写文章
                                     </li>
-                                    <li onClick={menuOption['drfat']}>
+                                    <li onClick={() => menuOption['drfat'](0)}>
+                                        <ReadOutlined className={headerModules["iconFont"]} />{" "}
+                                        我的文章
+                                    </li>
+                                    <li onClick={() => menuOption['drfat'](1)}>
                                         <RestOutlined className={headerModules["iconFont"]} />{" "}
                                         草稿箱
                                     </li>

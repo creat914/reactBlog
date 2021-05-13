@@ -17,8 +17,8 @@ export const menuOption = {
     'write':()=>{
         window.router.push('/Eidtor')
     },
-    'drfat':()=>{
-        window.router.push('/Draft')
+    'drfat':(type)=>{
+        window.router.push('/Draft/'+type)
     },
     'Profile':(id)=>{
         window.router.push(`/Profile/${id}`)
