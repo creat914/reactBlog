@@ -29,6 +29,7 @@ import { uploadSingle, uploadFileList, addArticle } from '@pc/apis/blogApis'
 import { fileAside } from "@pc/config/baseUrl";
 import { menuOption } from '@pc/config/headOption'
 import { CounterContext } from '@pc/sotre/index'
+import { useParams } from 'react-router-dom'
 // 将懒加载的样式文件存储起来
 let themeList = {};
 themeNameList.forEach((item) => {
@@ -78,6 +79,7 @@ const editor = () => {
   const titleInput = useRef(null);
   const optionDom = useRef();
   const { dispatch } = useContext(CounterContext);
+  const params = useParams();
   useEffect(() => {
     const clickOption = (e) => {
       if (
@@ -90,6 +92,9 @@ const editor = () => {
       }
     };
     window.addEventListener("click", clickOption);
+
+    const { type = 0 } = params;
+
     return () => {
       window.removeEventListener("click", clickOption);
     };
