@@ -1,10 +1,6 @@
 import React, { useEffect, useRef, useState, useMemo, useContext } from "react";
-import { Avatar, Tooltip, message } from "antd";
-import {
-  LogoutOutlined,
-  RestOutlined,
-  HomeOutlined,
-} from "@ant-design/icons";
+import { Avatar, Tooltip, message,Button } from "antd";
+import { LogoutOutlined, RestOutlined, HomeOutlined } from "@ant-design/icons";
 import { Editor } from "@bytemd/react";
 import gemoji from "@bytemd/plugin-gemoji";
 import gfm from "@bytemd/plugin-gfm";
@@ -25,11 +21,13 @@ import "bytemd/dist/index.min.css";
 import eiditorModules from "@pc/style/eiditor.less";
 import "highlight.js/styles/arduino-light.css";
 import themeNameList from "@pc/utils/themeName";
-import { uploadSingle, uploadFileList, addArticle } from '@pc/apis/blogApis'
+import { uploadSingle, uploadFileList, addArticle, updateArticle } from "@pc/apis/blogApis";
 import { fileAside } from "@pc/config/baseUrl";
-import { menuOption } from '@pc/config/headOption'
-import { CounterContext } from '@pc/sotre/index'
-import { useParams } from 'react-router-dom'
+import { menuOption } from "@pc/config/headOption";
+import { CounterContext } from "@pc/sotre/index";
+import { useParams } from "react-router-dom";
+import { getArticleDetail } from "@pc/apis/blogApis";
+const defaultImg = require("../assets/uploadImg.svg");
 // 将懒加载的样式文件存储起来
 let themeList = {};
 themeNameList.forEach((item) => {
@@ -49,6 +47,7 @@ const editor = () => {
     return themeStyleDom;
   }, []);
   const themeSelect = (e) => {
+    console.log(e)
     setSelStyle(e);
     if (hasSelThemeList[e]) {
       themeStyle.innerHTML = hasSelThemeList[e];
@@ -73,10 +72,11 @@ const editor = () => {
     ];
   }, []);
   const [state, setState] = useState(false);
-  const [thumeImg, setThumeImg] = useState("");
+  const [thumeImg, setThumeImg] = useState(defaultImg);
   const nowState = useRef(state);
   const uploadBox = useRef(null);
   const titleInput = useRef(null);
+  const [articleId,setArticleId] = useState("")
   const optionDom = useRef();
   const { dispatch } = useContext(CounterContext);
   const params = useParams();
@@ -92,9 +92,12 @@ const editor = () => {
       }
     };
     window.addEventListener("click", clickOption);
-
-    const { type = 0 } = params;
-
+    const { id = 0, type = 0 } = params;
+    console.log(params);
+    console.log(history);
+    if (type == 0) {
+      getArticleDetailFunc(id);
+    }
     return () => {
       window.removeEventListener("click", clickOption);
     };
@@ -102,17 +105,54 @@ const editor = () => {
   useEffect(() => {
     nowState.current = state;
   });
+  // 获取草稿箱明细
+  const getDrafDetailFunc = (articleId) => {
+    getArticleDetail({
+      articleId,
+    }).then((res) => {
+      setThumeImg(res.articleCoverImg)
+      setValue(res.articleContent)
+      titleInput.current.value = res.articleTitle;
+      themeSelect(res.articleTheme)
+    });
+  };
+  // 获取文章明细
+  const getArticleDetailFunc = (articleId) => {
+    setArticleId(articleId)
+    getArticleDetail({
+      articleId,
+    }).then((res) => {
+      setThumeImg(res.articleCoverImg)
+      setValue(res.articleContent)
+      titleInput.current.value = res.articleTitle;
+      themeSelect(res.articleTheme)
+    });
+  };
+
   // 保存文章
   const addArticleFun = async () => {
-    await addArticle({ thumkImg: thumeImg, articleTitle: titleInput.current.value, articleContent: value, articleTheme: selStyle })
-    message.success('发布成功')
-    setValue("")
-    setThumeImg("")
-    document.querySelector(
-      `.${eiditorModules["upload-box"]}`
-    ).src = ""
-    titleInput.current.value = ""
-  }
+    if(articleId){
+      await updateArticle({
+        articleId:articleId,
+        thumkImg: thumeImg,
+        articleTitle: titleInput.current.value,
+        articleContent: value,
+        articleTheme: selStyle
+      })
+    }else{
+      await addArticle({
+        thumkImg: thumeImg,
+        articleTitle: titleInput.current.value,
+        articleContent: value,
+        articleTheme: selStyle,
+      });
+    }
+    setArticleId("");
+    setValue("");
+    setThumeImg(defaultImg);
+    document.querySelector(`.${eiditorModules["upload-box"]}`).src = "";
+    titleInput.current.value = "";
+  };
   return (
     <div className={eiditorModules["editor-wraper"]}>
       <header className={eiditorModules["header"]}>
@@ -122,7 +162,7 @@ const editor = () => {
               <Tooltip placement="bottomLeft" title="点击上传封面图">
                 <label htmlFor="uploadInput" style={{ display: "table" }}>
                   <img
-                    src={require("../assets/uploadImg.svg")}
+                    src={thumeImg}
                     className={eiditorModules["upload-box"]}
                   />
                 </label>
@@ -136,7 +176,7 @@ const editor = () => {
                   let file = uploadBox.current.files[0];
                   var formData = new FormData();
                   formData.append("singleFile", file, file.name);
-                  let res = await uploadSingle(formData)
+                  let res = await uploadSingle(formData);
                   message.success("上传成功");
                   document.querySelector(
                     `.${eiditorModules["upload-box"]}`
@@ -161,12 +201,12 @@ const editor = () => {
               className={eiditorModules["titleInput"]}
               ref={titleInput}
             />
-            {/* <Button
+            <Button
               type="primary"
               className="writeArtice"
               onClick={addArticleFun}>
               发布文章
-            </Button> */}
+            </Button>
             <div className={eiditorModules["avatar"]}>
               <Avatar
                 style={{ backgroundColor: "#007fff" }}
@@ -180,13 +220,13 @@ const editor = () => {
                   state
                     ? eiditorModules["options"]
                     : [
-                      `${eiditorModules["options"]}`,
-                      `${eiditorModules["hidden"]}`,
-                    ].join(" ")
+                        `${eiditorModules["options"]}`,
+                        `${eiditorModules["hidden"]}`,
+                      ].join(" ")
                 }
               >
                 <ul className="option">
-                  <li onClick={menuOption['goHome']}>
+                  <li onClick={menuOption["goHome"]}>
                     <HomeOutlined className={eiditorModules["iconFont"]} />
                     首页
                   </li>
@@ -194,11 +234,11 @@ const editor = () => {
                     <FormOutlined className={eiditorModules["iconFont"]} />{" "}
                     写文章
                   </li> */}
-                  <li onClick={menuOption['drfat']}>
+                  <li onClick={menuOption["drfat"]}>
                     <RestOutlined className={eiditorModules["iconFont"]} />{" "}
                     草稿箱
                   </li>
-                  <li onClick={() => menuOption['loginout'](dispatch)}>
+                  <li onClick={() => menuOption["loginout"](dispatch)}>
                     <LogoutOutlined className={eiditorModules["iconFont"]} />{" "}
                     退出登录
                   </li>
@@ -216,23 +256,25 @@ const editor = () => {
           setValue(v);
         }}
         uploadImages={async (files) => {
-          return new Promise(resovle => {
+          return new Promise((resovle) => {
             let uploadList = [];
             let formData = new FormData();
             for (let i = 0; i < files.length; i++) {
               formData.append("multerFile", files[i], files[i].name);
             }
-            uploadFileList(formData).then(res => {
-              uploadList = res.map(item => {
-                return {
-                  url: fileAside(item.path)
-                }
+            uploadFileList(formData)
+              .then((res) => {
+                uploadList = res.map((item) => {
+                  return {
+                    url: fileAside(item.path),
+                  };
+                });
+                return resovle(uploadList);
+              })
+              .catch(() => {
+                return resovle(uploadList);
               });
-              return resovle(uploadList);
-            }).catch(() => {
-              return resovle(uploadList);
-            });
-          })
+          });
         }}
       />
     </div>

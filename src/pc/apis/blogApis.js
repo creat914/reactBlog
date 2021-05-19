@@ -78,3 +78,7 @@ export const getDraftList = ()=>{
 export const deleteDraf = (params)=>{
     return post('/api/deleteDraft',params)
 }
+
+export const updateArticle = (params)=>{
+    return post('/api/updateArticle',params)
+}

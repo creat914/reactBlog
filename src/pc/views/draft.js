@@ -6,6 +6,7 @@ import { List, Popover, Button, Spin, Pagination } from 'antd'
 import { EllipsisOutlined } from '@ant-design/icons'
 import drafStyle from "@pc/style/draf.less";
 import { CounterContext } from '@pc/sotre/index'
+import { formDate} from '@/utils'
 const Content = (props) => {
     return (
         <div style={{ display: 'flex', flexDirection: "column" }}>
@@ -47,7 +48,6 @@ const draft = () => {
     }
     // 获取草稿箱
     const getDrafList = () => {
-        console.log('草噶厦')
         setSpinning(true)
         getDraftList().then(res => {
             setList(res)
@@ -70,7 +70,7 @@ const draft = () => {
     }
     // 编辑文章or草稿箱
     const toEidtor = (articleId)=>{
-        history.push('/Eidtor/'+params.type+"?articleId="+articleId)
+        history.push('/Eidtor/'+params.type+"/articleId="+articleId)
     }
     const DrafList = (
         <div className={drafStyle['draf-wrap']}>
@@ -80,7 +80,7 @@ const draft = () => {
                         background: '#FFFFFF'
                     }}
                     header={
-                        <h1 style={{ paddingLeft: '26px', marginBottom: '0' }}>{isDraf ? '草稿箱' : '我的文章'}</h1>
+                        <h1 style={{ paddingLeft: '20px', marginBottom: '0' , fontSize : '20px' , fontWeight :'bolder'}}>{isDraf ? '草稿箱' : '我的创作列表'}</h1>
                     }
                     renderItem={item => (
                         <List.Item style={{
@@ -99,7 +99,7 @@ const draft = () => {
                                 minWidth: '200px'
                             }}>
                                 <span>
-                                    {item.createTime}
+                                    {formDate(item.createTime)}
                                 </span>
                                 <Popover content={<Content articleId={isDraf ? item.drftId : item.articleId} deleteDraf={deleteDrafFunc} toEidtor={toEidtor}/>} trigger="click" placement="bottomRight">
                                     <EllipsisOutlined style={{

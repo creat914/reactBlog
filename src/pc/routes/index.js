@@ -17,7 +17,7 @@ const draft = simpleHoc(asyncComponent(() =>
     import( /* webpackChunkName: "pc/chunck/draft" */ "../views/draft")
 ), -1)
 export default [{
-    path: '/Eidtor/:id?',
+    path: '/Eidtor/:type?/:id?',
     component: Eidtor
 }, {
     path: '/post/:id?',
