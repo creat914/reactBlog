@@ -5,7 +5,7 @@ import mainComp from "@pc/style/mainComp.less";
 import {loginContext} from '@pc/sotre/loginContext'
 const MainComp = (props) => {
   const { reduxState } = useContext(CounterContext)
-  const { login } = useContext(loginContext);
+  const { login ,hideenTop } = useContext(loginContext);
   useEffect(() => {
     const moreBox = document.querySelector(`.${mainComp.moreBox}`);
     var io = new IntersectionObserver((entries) => {
@@ -39,9 +39,10 @@ const MainComp = (props) => {
     console.log("Failed:", errorInfo);
   };
   return (
-    <section className={mainComp.blog}>
+    <section className={mainComp.blog} >
       {props.tagsBar && <div className={mainComp['blog-tags']}>{props.tagsBar}</div>}
-      <div className={props.tagsBar ? [`${mainComp["blog-session"]}`,`${ mainComp["hasTags"]}`].join(' ') : mainComp["blog-session"]}>
+      <div className={props.tagsBar ? [`${mainComp["blog-session"]}`,`${ mainComp["hasTags"]}`].join(' ') : mainComp["blog-session"]}
+      >
         <div className={mainComp['blog-session-list']}>{props.list}</div>
         <div className={mainComp['blog-session-aside']}>
           {!reduxState.userInfo.userId  && <div className={mainComp.unLogin}>

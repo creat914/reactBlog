@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useContext } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
-import { getDraftList, deleteDraf, getArticleList } from '@pc/apis/blogApis'
+import { getDraftList, deleteDraf, getArticleList, deleteArticle } from '@pc/apis/blogApis'
 import MainComp from "@pc/components/mainComp";
 import { List, Popover, Button, Spin, Pagination } from 'antd'
 import { EllipsisOutlined } from '@ant-design/icons'
 import drafStyle from "@pc/style/draf.less";
 import { CounterContext } from '@pc/sotre/index'
-import { formDate} from '@/utils'
+import { formDate } from '@/utils'
 const Content = (props) => {
     return (
         <div style={{ display: 'flex', flexDirection: "column" }}>
@@ -34,11 +34,11 @@ const draft = () => {
             getDrafList();
         }
     }, [params.type])
-    const getMyArticle = (page) => {
+    const getMyArticle = (page = 1) => {
         setSpinning(true)
         getArticleList({
             userId: reduxState.userInfo.userId,
-            isAuth:true,
+            isAuth: true,
             page: page
         }).then(res => {
             setList(res.list)
@@ -57,10 +57,10 @@ const draft = () => {
         })
     }
     // 删除草稿箱
-    const deleteDrafFunc = (draftId) => {
+    const deleteDrafFunc = (articleId) => {
         setSpinning(true)
         deleteDraf({
-            draftId
+            articleId
         }).then(res => {
             setSpinning(false)
             getDrafList()
@@ -68,9 +68,21 @@ const draft = () => {
             setSpinning(false)
         })
     }
+    // 删除文章
+    const deleteArticleFunc = (articleId) => {
+        setSpinning(true)
+        deleteArticle({
+            articleId
+        }).then(res => {
+            setSpinning(false)
+            getMyArticle(1)
+        }).catch(() => {
+            setSpinning(false)
+        })
+    }
     // 编辑文章or草稿箱
-    const toEidtor = (articleId)=>{
-        history.push('/Eidtor/'+params.type+"/articleId="+articleId)
+    const toEidtor = (articleId) => {
+        history.push('/Eidtor/' + params.type + "/" + articleId)
     }
     const DrafList = (
         <div className={drafStyle['draf-wrap']}>
@@ -80,7 +92,7 @@ const draft = () => {
                         background: '#FFFFFF'
                     }}
                     header={
-                        <h1 style={{ paddingLeft: '20px', marginBottom: '0' , fontSize : '20px' , fontWeight :'bolder'}}>{isDraf ? '草稿箱' : '我的创作列表'}</h1>
+                        <h1 style={{ paddingLeft: '20px', marginBottom: '0', fontSize: '20px', fontWeight: 'bolder' }}>{isDraf ? '草稿箱' : '我的创作列表'}</h1>
                     }
                     renderItem={item => (
                         <List.Item style={{
@@ -101,7 +113,7 @@ const draft = () => {
                                 <span>
                                     {formDate(item.createTime)}
                                 </span>
-                                <Popover content={<Content articleId={isDraf ? item.drftId : item.articleId} deleteDraf={deleteDrafFunc} toEidtor={toEidtor}/>} trigger="click" placement="bottomRight">
+                                <Popover content={<Content articleId={item.articleId} deleteDraf={isDraf ? deleteDrafFunc : deleteArticleFunc} toEidtor={toEidtor} />} trigger="click" placement="bottomRight">
                                     <EllipsisOutlined style={{
                                         fontSize: '22px',
                                         marginLeft: '20px'

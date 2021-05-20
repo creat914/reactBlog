@@ -13,7 +13,7 @@ export const loginFunc = (params) => {
 }
 
 //退出登录
-export const loginOut = ()=>{
+export const loginOut = () => {
     return post('/loginout');
 }
 
@@ -48,8 +48,8 @@ export const uploadSingle = (formData) => {
  * @param {*} params 
  * @returns 
  */
-export const getArticleDetail = (params) =>{
-    return get('/api/articleDetail',params)
+export const getArticleDetail = (params) => {
+    return get('/api/articleDetail', params)
 }
 
 /**
@@ -61,24 +61,70 @@ export const uploadFileList = async (formData) => {
     return post('/api/uploadMulter', formData, true)
 }
 
-
-export const getUserInfo = ()=>{
+/**
+ * 获取用户信息
+ * @returns 
+ */
+export const getUserInfo = () => {
     return get('/api/userInfo');
 }
 
-export const updateUserInfo = (params)=>{
-    return post('/api/updateInfo',params)
+/**
+ * 更新用户信息
+ * @param {*} params 
+ * @returns 
+ */
+export const updateUserInfo = (params) => {
+    return post('/api/updateInfo', params)
 }
 
-
-export const getDraftList = ()=>{
+/**
+ * 获取草稿箱
+ * @returns 
+ */
+export const getDraftList = () => {
     return get('/api/getDraft')
 }
 
-export const deleteDraf = (params)=>{
-    return post('/api/deleteDraft',params)
+/**
+ * 删除草稿箱
+ * @param {*} params 
+ * @returns 
+ */
+export const deleteDraf = (params) => {
+    return post('/api/deleteDraft', params)
+}
+/**
+ * 删除文章
+ * @param {*} params 
+ * @returns 
+ */
+ export const deleteArticle = (params) => {
+    return post('/api/deleteArticle', params)
 }
 
-export const updateArticle = (params)=>{
-    return post('/api/updateArticle',params)
+
+/**
+ * 更新文章
+ * @param {*} params 
+ * @returns 
+ */
+export const updateArticle = (params) => {
+    return post('/api/updateArticle', params)
+}
+
+/**
+ * 更新草稿箱
+ * @param {*} params 
+ * @returns 
+ */
+export const updateDraft = (params) => {
+    return post('/api/updateDraft', params);
+}
+
+/**
+ * 获取草稿箱
+ */
+export const getDrafDetail = (params)=>{
+    return get('/api/getDrafDetail',params)
 }

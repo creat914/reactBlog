@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useMemo, useContext } from "react";
-import { Avatar, Tooltip, message,Button } from "antd";
+import { Avatar, Tooltip, message, Button } from "antd";
 import { LogoutOutlined, RestOutlined, HomeOutlined } from "@ant-design/icons";
 import { Editor } from "@bytemd/react";
 import gemoji from "@bytemd/plugin-gemoji";
@@ -21,7 +21,7 @@ import "bytemd/dist/index.min.css";
 import eiditorModules from "@pc/style/eiditor.less";
 import "highlight.js/styles/arduino-light.css";
 import themeNameList from "@pc/utils/themeName";
-import { uploadSingle, uploadFileList, addArticle, updateArticle } from "@pc/apis/blogApis";
+import { uploadSingle, uploadFileList, addArticle, updateArticle, getDrafDetail ,updateDraft } from "@pc/apis/blogApis";
 import { fileAside } from "@pc/config/baseUrl";
 import { menuOption } from "@pc/config/headOption";
 import { CounterContext } from "@pc/sotre/index";
@@ -47,7 +47,7 @@ const editor = () => {
     return themeStyleDom;
   }, []);
   const themeSelect = (e) => {
-    console.log(e)
+    if(!e) e = 'juejin';
     setSelStyle(e);
     if (hasSelThemeList[e]) {
       themeStyle.innerHTML = hasSelThemeList[e];
@@ -76,7 +76,10 @@ const editor = () => {
   const nowState = useRef(state);
   const uploadBox = useRef(null);
   const titleInput = useRef(null);
-  const [articleId,setArticleId] = useState("")
+  const [isEdit, setIsEdit] = useState({
+    type: -1,
+    value: -1
+  })
   const optionDom = useRef();
   const { dispatch } = useContext(CounterContext);
   const params = useParams();
@@ -93,10 +96,11 @@ const editor = () => {
     };
     window.addEventListener("click", clickOption);
     const { id = 0, type = 0 } = params;
-    console.log(params);
-    console.log(history);
+    // 判断是文章还是草稿箱进来的 0 文章列表 1 草稿箱
     if (type == 0) {
       getArticleDetailFunc(id);
+    } else if (type == 1) {
+      getDrafDetailFunc(id);
     }
     return () => {
       window.removeEventListener("click", clickOption);
@@ -106,48 +110,69 @@ const editor = () => {
     nowState.current = state;
   });
   // 获取草稿箱明细
-  const getDrafDetailFunc = (articleId) => {
-    getArticleDetail({
-      articleId,
+  const getDrafDetailFunc = (draftId) => {
+    setIsEdit({
+      type: 1,
+      value: draftId
+    })
+    getDrafDetail({
+      draftId,
     }).then((res) => {
-      setThumeImg(res.articleCoverImg)
-      setValue(res.articleContent)
-      titleInput.current.value = res.articleTitle;
-      themeSelect(res.articleTheme)
+      setApiData(res)
     });
   };
   // 获取文章明细
   const getArticleDetailFunc = (articleId) => {
-    setArticleId(articleId)
+    setIsEdit({
+      type: 0,
+      value: articleId
+    })
     getArticleDetail({
       articleId,
     }).then((res) => {
-      setThumeImg(res.articleCoverImg)
-      setValue(res.articleContent)
-      titleInput.current.value = res.articleTitle;
-      themeSelect(res.articleTheme)
+      setApiData(res)
     });
   };
-
+  const setApiData = (res) => {
+    setThumeImg(res.articleCoverImg)
+    setValue(res.articleContent)
+    titleInput.current.value = res.articleTitle;
+    themeSelect(res.articleTheme)
+  }
   // 保存文章
   const addArticleFun = async () => {
-    if(articleId){
+    // 文章编辑
+    if (isEdit.type == 0) {
       await updateArticle({
-        articleId:articleId,
-        thumkImg: thumeImg,
+        articleId: isEdit.value,
+        articleCoverImg: thumeImg,
         articleTitle: titleInput.current.value,
         articleContent: value,
         articleTheme: selStyle
       })
-    }else{
+    }
+    // 草稿箱编辑
+    else if (isEdit.type == 1) {
+      await updateDraft({
+        articleId: isEdit.value,
+        articleCoverImg: thumeImg,
+        articleTitle: titleInput.current.value,
+        articleContent: value,
+        articleTheme: selStyle
+      })
+    }
+    else {
       await addArticle({
-        thumkImg: thumeImg,
+        articleCoverImg: thumeImg,
         articleTitle: titleInput.current.value,
         articleContent: value,
         articleTheme: selStyle,
       });
     }
-    setArticleId("");
+    setIsEdit({
+      type:-1,
+      value:""
+    });
     setValue("");
     setThumeImg(defaultImg);
     document.querySelector(`.${eiditorModules["upload-box"]}`).src = "";
@@ -220,9 +245,9 @@ const editor = () => {
                   state
                     ? eiditorModules["options"]
                     : [
-                        `${eiditorModules["options"]}`,
-                        `${eiditorModules["hidden"]}`,
-                      ].join(" ")
+                      `${eiditorModules["options"]}`,
+                      `${eiditorModules["hidden"]}`,
+                    ].join(" ")
                 }
               >
                 <ul className="option">
