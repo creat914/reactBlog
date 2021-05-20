@@ -35,10 +35,10 @@ const draft = () => {
         }
     }, [params.type])
     const getMyArticle = (page) => {
-        console.log(page)
         setSpinning(true)
         getArticleList({
             userId: reduxState.userInfo.userId,
+            isAuth:true,
             page: page
         }).then(res => {
             setList(res.list)

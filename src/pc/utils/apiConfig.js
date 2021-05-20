@@ -66,6 +66,10 @@ export function post(url, params, isUpload) {
         "content-type": "multipart/form-data",
       },
     };
+    if(params['isAuth']){
+       url = url+"?isAuth="+params['isAuth']
+       delete params['isAuth']
+    }
     return api.post(url, params, config);
   }
   return api.post(url, {
