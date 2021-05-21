@@ -41,7 +41,6 @@ const Header = (props) => {
     const optionDom = useRef();
     const [visible, setVisible] = React.useState(false);
     const [confirmLoading, setConfirmLoading] = React.useState(false);
-    const [modalText, setModalText] = React.useState("Content of the modal");
     const { reduxState, dispatch } = useContext(CounterContext);
     const { login } = useContext(loginContext);
     useEffect(() => {

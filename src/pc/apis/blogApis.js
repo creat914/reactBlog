@@ -99,10 +99,19 @@ export const deleteDraf = (params) => {
  * @param {*} params 
  * @returns 
  */
- export const deleteArticle = (params) => {
+export const deleteArticle = (params) => {
     return post('/api/deleteArticle', params)
 }
 
+/**
+ * 点赞文章
+ * @param {} params 
+ * @returns 
+ */
+
+export const updateLikeArticle = (params) => {
+    return get('/api/updateLikeArticle', params)
+}
 
 /**
  * 更新文章
@@ -125,6 +134,24 @@ export const updateDraft = (params) => {
 /**
  * 获取草稿箱
  */
-export const getDrafDetail = (params)=>{
-    return get('/api/getDrafDetail',params)
+export const getDrafDetail = (params) => {
+    return get('/api/getDrafDetail', params)
 }
+
+
+/**
+ * 获取收藏夹
+ * @param {} params 
+ * @returns 
+ */
+export const getCollectList = (params) => {
+    return get('/api/collectlist', params);
+}
+
+/**
+ * 新增收藏夹
+ */
+export const addCollect = (params) => {
+    return post('/api/addCollect', params);
+}
+

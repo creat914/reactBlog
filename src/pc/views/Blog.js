@@ -1,25 +1,30 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { NavLink, Link } from "react-router-dom";
+import React, { useCallback, useEffect, useRef, useState, useContext, useMemo } from "react";
+import { NavLink, Link, useParams } from "react-router-dom";
 import { Card } from "antd";
 import { LikeFilled, MessageFilled, ForkOutlined } from "@ant-design/icons";
 import MainComp from "@pc/components/mainComp";
 import blogStyle from "@pc/style/blog.less";
 import { getArticleList } from '@pc/apis/blogApis'
-const Blog = (props) => {
-  const { match } = props;
+import { loginContext } from '@pc/sotre/loginContext'
+const BlogList = (props) => {
+  const { keyword } = useContext(loginContext)
   const [articleList, setArticle] = useState([])
-  const [page, setPage] = useState(0)
-  const [loading, setLoading] = useState(false)
-  const PageCurrent = useRef(page)
-  const LoadingCurrent = useRef(loading)
-  const getArticleListFunc = () => {
-    LoadingCurrent.current = true
+  useEffect(() => {
+    props.resetCurrent()
+    getArticleListFunc(1)
+    console.log('keyword')
+  }, [keyword])
+  const getArticleListFunc = (page) => {
+    if (page == 1) {
+      setArticle([])
+    }
+    props.setLoadingState(true)
     getArticleList({
       page,
-      keyword: props.keyword || ''
+      keyword: keyword || ''
     }).then(res => {
       if (res.list.length) {
-        LoadingCurrent.current = false
+        props.setLoadingState(false)
         if (page == 1) {
           setArticle(res.list)
         } else {
@@ -28,7 +33,7 @@ const Blog = (props) => {
       }
     })
   }
-  const formTime = useCallback((time) => {
+  const formTime = (time) => {
     if (!time) {
       return ""
     }
@@ -44,21 +49,16 @@ const Blog = (props) => {
     } else {
       return Math.round(timeDifference / (60 * 60 * 24)) + '天前'
     }
-  }, [])
+  };
   useEffect(() => {
-    if (page > 0) {
-      getArticleListFunc();
-    }
-  }, [page])
-  const BlogList = () => {
-    return (
-      <Card
-        title={null}
-        style={{ flex: 1 }}
-      >
-        {articleList.map((item, index) => {
+    getArticleListFunc(props.page)
+  }, [props.page])
+  const listRender = useMemo(() => {
+    return (<>
+      {
+        articleList.map((item) => {
           return (
-            <div className={blogStyle["content-box"]} key={index}>
+            <div className={blogStyle["content-box"]} key={item.articleId}>
               <div className={blogStyle["info-box"]}>
                 <ul className={blogStyle["meta-list"]}>
                   <li>
@@ -76,11 +76,11 @@ const Blog = (props) => {
                 </div>
                 <div className={blogStyle["action-row"]}>
                   <ul>
-                    <li title="点赞">
+                    <li title="点赞数">
                       <LikeFilled style={{ color: "#b2bac2" }} />
                       <span className={blogStyle["count"]}>{item.likeCount}</span>
                     </li>
-                    <li title="吐糟">
+                    <li title="评论数">
                       <MessageFilled style={{ color: "#b2bac2" }} />
                       <span className={blogStyle["count"]}>{item.commentCount}</span>
                     </li>
@@ -96,40 +96,65 @@ const Blog = (props) => {
               />}
             </div>
           );
-        })}
-      </Card>
-    );
-  };
-  const BlogTags = () => {
-    return (
-      <div className={blogStyle["blog-tags-container"]}>
-        <ul>
-          <li
-            className={
-              match.params.tag === undefined || blogStyle["recommended"]
-                ? blogStyle["tagActive"]
-                : ""
-            }
-          >
-            <NavLink to="/">推荐</NavLink>
-          </li>
-        </ul>
-        {/* <NavLink to="/tarEdit">标签管理</NavLink> */}
-      </div>
-    );
-  };
+        })
+      }
+    </>)
+  }, [articleList])
+  return (
+    <Card
+      title={null}
+      style={{ flex: 1 }}
+    >
+      {listRender}
+    </Card>
+  );
+};
+const BlogTags = () => {
+  const params = useParams()
+  return (
+    <div className={blogStyle["blog-tags-container"]}>
+      <ul>
+        <li
+          className={
+            params.tag === undefined || blogStyle["recommended"]
+              ? blogStyle["tagActive"]
+              : ""
+          }
+        >
+          <NavLink to="/">推荐</NavLink>
+        </li>
+      </ul>
+      {/* <NavLink to="/tarEdit">标签管理</NavLink> */}
+    </div>
+  );
+};
+const Blog = () => {
+  const [page, setPage] = useState(1)
+  const [loading, setLoading] = useState(false)
+  const PageCurrent = useRef(page)
+  const LoadingCurrent = useRef(loading)
   const BlogAside = () => {
     return <div></div>;
   };
   const getMoreDate = () => {
     if (!LoadingCurrent.current) {
-      PageCurrent.current++;
-      setPage(PageCurrent.current)
+      setPage(PageCurrent.current + 1)
     }
   };
+  const resetCurrent = () => {
+    PageCurrent.current = 1;
+  }
+  const setLoadingState = (flag) => {
+    LoadingCurrent.current = flag
+  }
+  useEffect(() => {
+    PageCurrent.current = page
+  })
   return (
     <MainComp
-      list={<BlogList />}
+      list={<BlogList page={page} resetCurrent={resetCurrent}
+        setLoadingState={setLoadingState}
+      />}
       aside={<BlogAside />}
       tagsBar={<BlogTags />}
       getMoreDate={() => getMoreDate()}

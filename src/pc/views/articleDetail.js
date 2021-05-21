@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { Viewer } from "@bytemd/react";
 import MainComp from "@pc/components/mainComp.js";
 import gemoji from "@bytemd/plugin-gemoji";
@@ -9,18 +9,23 @@ import mermaid from "@bytemd/plugin-mermaid";
 import math from "@bytemd/plugin-math";
 import highlight from "@bytemd/plugin-highlight";
 import footnotes from "@bytemd/plugin-footnotes";
-import { getArticleDetail } from '@pc/apis/blogApis'
+import { getArticleDetail, updateLikeArticle, getCollectList, addCollect } from '@pc/apis/blogApis'
 import "@pc/style/detail.less";
 import {
     gfmLanguage,
     mathLanguage,
     mermaidLanguage,
 } from "@pc/config/editConfig.js";
+import { LikeOutlined, HeartOutlined, LikeFilled, HeartFilled } from '@ant-design/icons'
+import { Modal, List, Button, Input } from 'antd'
 const articleDetail = (props) => {
+    const addCollectInput = useRef()
     const [value, setValue] = useState({});
     const [menu, setMenu] = useState([]);
+    const [isShowCollect, setIsShowCollect] = useState(false)
+    const [isShowAddCollect, setIsShowAddCollect] = useState(false)
+    const [collectList, setCollectList] = useState([])
     useEffect(() => {
-        
         let themeStyle = document.createElement("style");
         document.head.appendChild(themeStyle);
         getArticleDetail({
@@ -37,21 +42,6 @@ const articleDetail = (props) => {
                 );
             }
         })
-        // let themeStyle = document.createElement("style");
-        // document.head.appendChild(themeStyle);
-        // let selStyle = localStorage.selStyle;
-        // if (selStyle) {
-        //     import(`../ThemeStyle/${selStyle}Theme.js`).then(
-        //         ({default: styleName}) => {
-        //             themeStyle.innerHTML = styleName;
-        //             let editorText = localStorage.editorText;
-        //             editorText && setValue(editorText);
-        //         }
-        //     );
-        // } else {
-        //     let editorText = localStorage.editorText;
-        //     editorText && setValue(editorText);
-        // }
         return () => {
             document.head.removeChild(themeStyle);
         };
@@ -121,15 +111,107 @@ const articleDetail = (props) => {
             </div>
         );
     }, [menu]);
-    const ViewerBox = useCallback(() => {
+    const ViewerBox = () => {
+        const iconStyle = {
+            fontSize: '18px',
+            cursor: 'pointer'
+        }
         return (
             <div className="detail-box">
-                <img className="thumImg" src={value.articleCoverImg} />
+                <div className="userOption">
+                    <div onClick={
+                        () => {
+                            updateLikeArticle({
+                                articleId: value.articleId,
+                                state: value.isLike ? 0 : 1
+                            }).then(res => {
+                                setValue({
+                                    ...value,
+                                    isLike: !value.isLike
+                                })
+                            })
+                        }
+                    }>{value.isLike ? <LikeFilled style={{ ...iconStyle, 'color': 'green' }} />
+                        : <LikeOutlined style={iconStyle} />}</div>
+                    <div onClick={() => {
+                        getCollectList().then(res => {
+                            setCollectList(res)
+                            setIsShowCollect(true)
+                        }).catch(() => {
+                            setCollectList([])
+                        })
+                    }}> {
+                            value.isCollect ? <HeartFilled style={{ ...iconStyle, 'color': 'rgb(255,155,71)' }} /> :
+                                <HeartOutlined style={iconStyle} />
+                        }</div>
+                </div>
+                {value.articleCoverImg ? <img className="thumImg" src={value.articleCoverImg} /> : null}
                 <h1 className="title">{value.articleTitle}</h1>
                 <Viewer value={value.articleContent} plugins={plugins} />
             </div>
         )
-    }, [value]);
-    return <MainComp list={<ViewerBox />} aside={<MeunListBox />} />;
+    };
+    return (
+        <>
+            <MainComp list={<ViewerBox />} aside={<MeunListBox />} />
+            <Modal
+                title="收藏文章"
+                footer={null}
+                visible={isShowCollect}
+                onCancel={
+                    () => {
+                        setIsShowCollect(false)
+                    }
+                }
+            >
+                <div className="myCollect">
+                    <h2>我的收藏夹</h2>
+                    <Button type="primary" onClick={
+                        () => {
+                            setIsShowAddCollect(true);
+                        }
+                    }>新增</Button>
+                </div>
+                <List dataSource={collectList} renderItem={item => {
+                    return (<List.Item style={{
+                        fontSize: "16px",
+                        cursor: "pointer"
+                    }}
+                        extra={<span>({item.count})</span>}
+                        onClick={() => {
+
+                        }}
+                    >
+                        {item.collect_name}
+                    </List.Item>)
+                }}>
+                </List>
+            </Modal>
+            <Modal
+                title="新增收藏夹"
+                cancelText="关闭"
+                okText="确认"
+                visible={isShowAddCollect}
+                onOk={() => {
+                    console.log(addCollectInput)
+                    addCollect({
+                        collect_name: addCollectInput.current.state.value
+                    }).then(res => {
+                        setCollectList([
+                            ...collectList,
+                            {
+                                collect_id: res.data,
+                                collect_name: addCollectInput.current.state.value,
+                                count: 0
+                            }
+                        ])
+                        setIsShowAddCollect(false)
+                    })
+                }}
+                onCancel={() => setIsShowAddCollect(false)} >
+                <Input placeholder="输入收藏夹名称" maxLength="20" ref={addCollectInput} />
+            </Modal>
+        </>
+    );
 };
 export default articleDetail;

@@ -4,10 +4,11 @@ import React, {
     useEffect,
     useContext
 } from 'react';
-import {CounterContext, RESET, SET_TOKEN, SET_USERINFO} from '@pc/sotre/index'
+import { BackTop } from 'antd'
+import { CounterContext, RESET, SET_TOKEN, SET_USERINFO } from '@pc/sotre/index'
 import { loginFunc } from '@pc/apis/blogApis'
 import Header from "@pc/components/Header";
-import { loginContext } from '@pc/sotre/loginContext'
+import { loginContext } from '@pc/sotre/loginContext';
 const simpleHoc = (WrappedComponent, local) => (props) => {
     const { dispatch } = useContext(CounterContext);
     const [hideenTop, setHideenTop] = useState(false)
@@ -27,20 +28,20 @@ const simpleHoc = (WrappedComponent, local) => (props) => {
         }
     }, [])
     // 登录操作
-    const login = useCallback(async ({username,password})=>{
-            let res = await loginFunc({username,password})
-            if(res){
-                dispatch({ type:SET_TOKEN, token:res.token })
-                dispatch({type:SET_USERINFO,userInfo:res.userInfo})
-            }else{
-                dispatch({
-                    type:RESET
-                })
-            }
-    },[])
-    const searchKeyWord = useCallback((keyword)=>{
-        console.log('keyword',keyword)
-          setKeyword(keyword)
+    const login = useCallback(async ({ username, password }) => {
+        let res = await loginFunc({ username, password })
+        if (res) {
+            dispatch({ type: SET_TOKEN, token: res.token })
+            dispatch({ type: SET_USERINFO, userInfo: res.userInfo })
+        } else {
+            dispatch({
+                type: RESET
+            })
+        }
+    }, [])
+    const searchKeyWord = useCallback((keyword) => {
+        // console.log('keyword', keyword)
+        setKeyword(keyword)
     })
     useEffect(() => {
         const EventScollFunc = ScollFunc()
@@ -50,12 +51,14 @@ const simpleHoc = (WrappedComponent, local) => (props) => {
         }
     }, [])
     return (
-          <loginContext.Provider value={{login}}>
+        <loginContext.Provider value={{ login ,keyword }}>
             <div className='view-container'>
-                 <Header local={local} hideenTop={hideenTop} searchKeyWord={searchKeyWord}/>
-                 <WrappedComponent {...props} keyword={keyword}/>
-             </div>
-          </loginContext.Provider>
+                {/* hideenTop={hideenTop} */}
+                <BackTop visibilityHeight={300} duration={100}/>
+                <Header local={local} searchKeyWord={searchKeyWord} />
+                <WrappedComponent {...props} />
+            </div>
+        </loginContext.Provider>
     )
 }
 export default simpleHoc;
