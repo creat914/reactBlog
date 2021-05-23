@@ -1,18 +1,19 @@
 import React, { useCallback, useEffect, useRef, useState, useContext, useMemo } from "react";
 import { NavLink, Link, useParams } from "react-router-dom";
 import { Card } from "antd";
-import { LikeFilled, MessageFilled, ForkOutlined } from "@ant-design/icons";
+
 import MainComp from "@pc/components/mainComp";
 import blogStyle from "@pc/style/blog.less";
 import { getArticleList } from '@pc/apis/blogApis'
 import { loginContext } from '@pc/sotre/loginContext'
+import { articleItem as ArticleItem } from "../components/articleItem";
 const BlogList = (props) => {
   const { keyword } = useContext(loginContext)
   const [articleList, setArticle] = useState([])
   useEffect(() => {
     props.resetCurrent()
     getArticleListFunc(1)
-    console.log('keyword')
+    // console.log('keyword')
   }, [keyword])
   const getArticleListFunc = (page) => {
     if (page == 1) {
@@ -33,72 +34,12 @@ const BlogList = (props) => {
       }
     })
   }
-  const formTime = (time) => {
-    if (!time) {
-      return ""
-    }
-    time = new Date(time).getTime() / 1000
-    let nowTime = new Date().getTime() / 1000
-    let timeDifference = nowTime - time;
-    if (timeDifference < 60) {
-      return '刚刚'
-    } else if (timeDifference > 60 && timeDifference < 3600) {
-      return Math.round(timeDifference / 60) + '分钟前'
-    } else if (timeDifference > 60 * 60 && timeDifference < 60 * 60 * 24) {
-      return Math.round(timeDifference / (60 * 60)) + '小时前'
-    } else {
-      return Math.round(timeDifference / (60 * 60 * 24)) + '天前'
-    }
-  };
+
   useEffect(() => {
     getArticleListFunc(props.page)
   }, [props.page])
   const listRender = useMemo(() => {
-    return (<>
-      {
-        articleList.map((item) => {
-          return (
-            <div className={blogStyle["content-box"]} key={item.articleId}>
-              <div className={blogStyle["info-box"]}>
-                <ul className={blogStyle["meta-list"]}>
-                  <li>
-                    <a href="">{item.nickname || '游客' + item.userId}</a>
-                  </li>
-                  <li>{formTime(item.createTime)}</li>
-                  <li>
-                    <a href="">前端</a>
-                  </li>
-                </ul>
-                <div className={blogStyle["info-row"]}>
-                  <Link to={"/post/" + item.articleId} target="_blank">
-                    {item.articleTitle}
-                  </Link>
-                </div>
-                <div className={blogStyle["action-row"]}>
-                  <ul>
-                    <li title="点赞数">
-                      <LikeFilled style={{ color: "#b2bac2" }} />
-                      <span className={blogStyle["count"]}>{item.likeCount}</span>
-                    </li>
-                    <li title="评论数">
-                      <MessageFilled style={{ color: "#b2bac2" }} />
-                      <span className={blogStyle["count"]}>{item.commentCount}</span>
-                    </li>
-                    <li title="分享">
-                      <ForkOutlined style={{ color: "#b2bac2" }} />
-                    </li>
-                  </ul>
-                </div>
-              </div>
-              {item.articleCoverImg && <img
-                className={blogStyle["thumb"]}
-                src={item.articleCoverImg}
-              />}
-            </div>
-          );
-        })
-      }
-    </>)
+    return (<ArticleItem articleList={articleList}/>)
   }, [articleList])
   return (
     <Card

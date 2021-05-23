@@ -1,121 +1,186 @@
-.editor-wraper{
-   width: 100vw;
-   height: 100vh;
-   display: flex;
-   flex-direction: column;
-   overflow: hidden;
-   .editorHeader{
-      width: 100%;
-      height: .convert(100) [ @rem];
-      display: flex;
-   }
-   :global  .bytemd {
-      height: calc(100vh - .convert(60) [ @rem]);
-   }
+.editor-wraper {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  .editorHeader {
+    width: 100%;
+    height: .convert(100) [ @rem];
+    display: flex;
+  }
+  :global .bytemd {
+    height: calc(100vh - .convert(60) [ @rem]);
+  }
 }
 
-.hidden{
-   display: none;
- }
- ul{
-   margin-bottom: 0;
- }
- .header {
-   width: 100%;
-   height: .convert(60)[@rem];
-   transition: all 0.3s;
-   background: #FFFFFF;
-   color: @theme-color;
-   font-weight: 500;
-   position: relative;
-   z-index: 0;
- 
- 
-   .ant-input-affix-wrapper {
-     box-shadow: 0 0 0 !important;
-   }
- 
-   &.hiddenHeder{
-     height: 0;
-     overflow: hidden;
- 
-     .header-fixed{
-       top:-60px;
-     }
-   }
-   &-fixed{
+.hidden {
+  display: none;
+}
+ul {
+  margin-bottom: 0;
+}
+.header {
+  width: 100%;
+  height: .convert(60) [ @rem];
+  transition: all 0.3s;
+  background: #ffffff;
+  color: @theme-color;
+  font-weight: 500;
+  position: relative;
+  z-index: 0;
+  .ant-input-affix-wrapper {
+    box-shadow: 0 0 0 !important;
+  }
+
+  &.hiddenHeder {
+    height: 0;
+    overflow: hidden;
+
+    .header-fixed {
+      top: -60px;
+    }
+  }
+  // &-fixed {
+  //   width: 100%;
+  //   position: fixed;
+  //   top: 0;
+  //   left: 0;
+  //   background: #ffffff;
+  //   border-bottom: .convert(1) [ @rem] solid #f1f1f1;
+  //   z-index: 1;
+  //   transition: all 0.3s;
+  // }
+  &-container {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0 .convert(40) [ @rem];
+    height: 100%;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    .upload-box {
+      max-height: .convert(40) [ @rem];
+      max-width: .convert(100) [ @rem];
+      margin: 0;
+      margin-right: .convert(12) [ @rem];
+      cursor: pointer;
+      border-radius: .convert(4) [ @rem ];
+    }
+    .default-uplpad{
+       display: inline-block;
+       width: 80px;
+       height: 40px;
+       font-size: 18px;
+       text-align: center;
+       line-height: 40px;
+       background: #ebebeb;
+       border-radius: 4px;
+       margin-right: 15px;
+       color: #666666;
+    }
+    .titleInput {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-size: .convert(24) [ @rem];
+      color: #666666;
+    }
+
+    .avatar {
+      position: relative;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      margin-left: .convert(30) [ @rem];
+
+      .options {
+        min-width: .convert(160) [ @rem];
+        border-radius: .convert(3) [ @rem];
+        border: 1px solid #ccc;
+        position: absolute;
+        top: .convert(38) [ @rem];
+        right: 0px;
+        z-index: 2014;
+        background: #ffffff;
+
+        ul {
+          margin: .convert(8) [ @rem] 0;
+
+          li {
+            color: #71777c;
+            height: .convert(30) [ @rem];
+            line-height: .convert(30) [ @rem];
+            padding: 0 .convert(10) [ @rem];
+            font-size: .convert(14) [ @rem];
+
+            &:hover {
+              background: #ebebeb;
+            }
+            .iconFont {
+              fontsize: .convert(18) [ @rem];
+              color: #555555;
+              margin-right: .convert(10) [ @rem];
+            }
+          }
+        }
+      }
+    }
+  }
+  &-left {
+    flex: 1;
+    display: flex;
+    align-items: center;
+  }
+
+  &-sub {
+    display: flex;
+  }
+
+  .phone-show{
+      padding-left:5px;
+      display: none;
+      span{
+        display: inline-block;
+        width:30px;
+        height: 30px;
+        text-align: center;
+        line-height: 30px;
+        border-radius: 50%;
+        background: @theme-color;
+        margin-right: 10px;
+        color: #ffffff;
+        font-size: 14px;
+      }
+  }
+}
+@media screen and (max-width: 750px) {
+  .upload-box {
+    height: .convert(30) [ @rem] !important;
+  }
+  .titleInput {
+    font-size: 16px !important;
+  }
+  .header{
+    height: .convert(50)[@rem] !important;
+  }
+  .header-container{
+    // flex-direction: column-reverse;
+    padding: 0 10px;
+  }
+  .header-left{
      width: 100%;
-     position: fixed;
-     top: 0;
-     left: 0;
-     background: #FFFFFF;
-     border-bottom: .convert(1)[@rem] solid #f1f1f1;
-     z-index: 1;
-     transition: all 0.3s;
-   }
-   &-container {
-     width: 100%;
-     box-sizing: border-box;
-     padding: 0 .convert(40)[@rem];
-     height: 60px;
-     display: flex;
-     align-items: center;
- 
-     .upload-box {
-       height: .convert(35)[@rem];
-       margin: 0;
-       margin-right: .convert(24)[@rem];
-       cursor: pointer;
-       border-radius: .convert(4)[@rem ];
-     }
- 
-     .titleInput{
-        flex: 1;
-        border: none;
-        outline: none;
-        font-size: .convert(24)[@rem];
-        color: #666666;
-     }
-    
-     .avatar {
-       position: relative;
-       height: 100%;
-       display: flex;
-       align-items: center;
-       margin-left: .convert(30)[@rem];
- 
-       .options {
-         min-width: .convert(160)[@rem];
-         border-radius: .convert(3)[@rem];
-         border: 1px solid #CCC;
-         position: absolute;
-         top: .convert(59)[@rem];
-         right: 0px;
-         z-index: 2014;
-         background: #FFFFFF;
- 
-         ul {
-           margin: .convert(8)[@rem] 0;
- 
-           li {
-             color: #71777c;
-             height: .convert(30)[@rem];;
-             line-height: .convert(30)[@rem];
-             padding: 0 .convert(10)[@rem];
-             font-size: .convert(14)[@rem];
- 
-             &:hover {
-               background: #EBEBEB;
-             }
-             .iconFont {
-               fontSize: .convert(18)[@rem];
-               color: #555555;
-               margin-right: .convert(10)[@rem];
-             }
-           }
-         }
-       }
-     }
-   }
- }
- 
+  }
+  .header-sub{
+    justify-content: flex-end;
+    display: none;
+    button{
+       height: 30px;
+       font-size: 12px;
+    }
+  }
+
+  .phone-show{
+    display: unset !important;
+  }
+}

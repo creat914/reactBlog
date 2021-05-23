@@ -1,4 +1,11 @@
-import React, { useEffect, useRef, useState, useMemo, useContext } from "react";
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  useMemo,
+  useContext,
+  useCallback,
+} from "react";
 import { Avatar, Tooltip, message, Button } from "antd";
 import { LogoutOutlined, RestOutlined, HomeOutlined } from "@ant-design/icons";
 import { Editor } from "@bytemd/react";
@@ -21,13 +28,20 @@ import "bytemd/dist/index.min.css";
 import eiditorModules from "@pc/style/eiditor.less";
 import "highlight.js/styles/arduino-light.css";
 import themeNameList from "@pc/utils/themeName";
-import { uploadSingle, uploadFileList, addArticle, updateArticle, getDrafDetail ,updateDraft } from "@pc/apis/blogApis";
+import {
+  uploadSingle,
+  uploadFileList,
+  addArticle,
+  updateArticle,
+  getDrafDetail,
+  updateDraft,
+  deleteDraf,
+} from "@pc/apis/blogApis";
 import { fileAside } from "@pc/config/baseUrl";
 import { menuOption } from "@pc/config/headOption";
 import { CounterContext } from "@pc/sotre/index";
 import { useParams } from "react-router-dom";
 import { getArticleDetail } from "@pc/apis/blogApis";
-const defaultImg = require("../assets/uploadImg.svg");
 // 将懒加载的样式文件存储起来
 let themeList = {};
 themeNameList.forEach((item) => {
@@ -38,7 +52,9 @@ themeNameList.forEach((item) => {
 });
 //存储已经加载过得样式文件
 let hasSelThemeList = {};
-const editor = () => {
+const defaultImg =
+  "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fku.90sjimg.com%2Felement_origin_min_pic%2F01%2F47%2F26%2F835743e2ba5da85.jpg&refer=http%3A%2F%2Fku.90sjimg.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1624290346&t=dc4e885e5e8b17997c19552e4e12530d";
+const editor = (props) => {
   const [value, setValue] = useState("");
   const [selStyle, setSelStyle] = useState("juejin");
   const themeStyle = useMemo(() => {
@@ -47,7 +63,7 @@ const editor = () => {
     return themeStyleDom;
   }, []);
   const themeSelect = (e) => {
-    if(!e) e = 'juejin';
+    if (!e) e = "juejin";
     setSelStyle(e);
     if (hasSelThemeList[e]) {
       themeStyle.innerHTML = hasSelThemeList[e];
@@ -73,13 +89,16 @@ const editor = () => {
   }, []);
   const [state, setState] = useState(false);
   const [thumeImg, setThumeImg] = useState(defaultImg);
+  const [titleInput, setTitleInput] = useState("");
+  const TitleInputRef = useRef(null);
   const nowState = useRef(state);
   const uploadBox = useRef(null);
-  const titleInput = useRef(null);
+  // const titleInput = useRef(null);
+  const articleContent = useRef(value);
   const [isEdit, setIsEdit] = useState({
     type: -1,
-    value: -1
-  })
+    value: -1,
+  });
   const optionDom = useRef();
   const { dispatch } = useContext(CounterContext);
   const params = useParams();
@@ -95,7 +114,7 @@ const editor = () => {
       }
     };
     window.addEventListener("click", clickOption);
-    const { id = 0, type = 0 } = params;
+    const { id, type } = params;
     // 判断是文章还是草稿箱进来的 0 文章列表 1 草稿箱
     if (type == 0) {
       getArticleDetailFunc(id);
@@ -106,90 +125,129 @@ const editor = () => {
       window.removeEventListener("click", clickOption);
     };
   }, []);
+
+  useEffect(() => {
+    if (titleInput !== "" && value !== "") {
+      autoUpdateDrafFunc(isEdit.value, value, titleInput, thumeImg, selStyle);
+    }
+  }, [value, titleInput, thumeImg, selStyle]);
   useEffect(() => {
     nowState.current = state;
+    articleContent.current = value;
   });
+  const autoUpdateDraf = () => {
+    let timer = null;
+    return (
+      articleId,
+      value,
+      titleInput,
+      thumeImg,
+      selStyle,
+      isClear = false
+    ) => {
+      console.log(timer);
+      timer && clearTimeout(timer);
+      if (isClear) return;
+      timer = setTimeout(() => {
+        updateDraft({
+          articleId: articleId,
+          articleCoverImg: thumeImg,
+          articleTitle: titleInput,
+          articleContent: value,
+          articleTheme: selStyle,
+        }).then((res) => {
+          if (res) {
+            setIsEdit({
+              ...isEdit,
+              value: res,
+            });
+          }
+        });
+      }, 1000);
+    };
+  };
+  const autoUpdateDrafFunc = useCallback(autoUpdateDraf(), []);
+
   // 获取草稿箱明细
-  const getDrafDetailFunc = (draftId) => {
+  const getDrafDetailFunc = (articleId) => {
     setIsEdit({
       type: 1,
-      value: draftId
-    })
+      value: draftId,
+    });
     getDrafDetail({
-      draftId,
+      articleId,
     }).then((res) => {
-      setApiData(res)
+      setApiData(res);
     });
   };
   // 获取文章明细
   const getArticleDetailFunc = (articleId) => {
     setIsEdit({
       type: 0,
-      value: articleId
-    })
+      value: articleId,
+    });
     getArticleDetail({
       articleId,
     }).then((res) => {
-      setApiData(res)
+      setApiData(res);
     });
   };
   const setApiData = (res) => {
-    setThumeImg(res.articleCoverImg)
-    setValue(res.articleContent)
-    titleInput.current.value = res.articleTitle;
-    themeSelect(res.articleTheme)
-  }
+    autoUpdateDrafFunc("", "", "", "", "", true);
+    setThumeImg(res.articleCoverImg);
+    setValue(res.articleContent);
+    setTitleInput(res.articleTitle);
+    themeSelect(res.articleTheme);
+  };
   // 保存文章
   const addArticleFun = async () => {
-    // 文章编辑
-    if (isEdit.type == 0) {
-      await updateArticle({
-        articleId: isEdit.value,
-        articleCoverImg: thumeImg,
-        articleTitle: titleInput.current.value,
-        articleContent: value,
-        articleTheme: selStyle
-      })
-    }
     // 草稿箱编辑
-    else if (isEdit.type == 1) {
-      await updateDraft({
+    if (isEdit.type == 1) {
+      let result = await updateDraft({
         articleId: isEdit.value,
         articleCoverImg: thumeImg,
-        articleTitle: titleInput.current.value,
-        articleContent: value,
-        articleTheme: selStyle
-      })
-    }
-    else {
-      await addArticle({
-        articleCoverImg: thumeImg,
-        articleTitle: titleInput.current.value,
+        articleTitle: titleInput,
         articleContent: value,
         articleTheme: selStyle,
       });
+      console.log(result);
+    } else {
+      await addArticle({
+        articleCoverImg: thumeImg,
+        articleTitle: titleInput,
+        articleContent: value,
+        articleTheme: selStyle,
+      });
+      await deleteDraf({
+        articleId: isEdit.value,
+      });
     }
     setIsEdit({
-      type:-1,
-      value:""
+      type: -1,
+      value: "",
     });
     setValue("");
+    // console.log(defaultImg)
     setThumeImg(defaultImg);
+    TitleInputRef.current.value = "";
     document.querySelector(`.${eiditorModules["upload-box"]}`).src = "";
-    titleInput.current.value = "";
+    setTitleInput("");
+    message.success("发表成功");
   };
   return (
     <div className={eiditorModules["editor-wraper"]}>
       <header className={eiditorModules["header"]}>
-        <div className={eiditorModules["header-fixed"]}>
-          <div className={eiditorModules["header-container"]}>
+        <div className={eiditorModules["header-container"]}>
+          <div className={eiditorModules["header-left"]}>
             <div>
               <Tooltip placement="bottomLeft" title="点击上传封面图">
                 <label htmlFor="uploadInput" style={{ display: "table" }}>
-                  <img
-                    src={thumeImg}
-                    className={eiditorModules["upload-box"]}
-                  />
+                  {
+                    <img
+                      src={thumeImg}
+                      className={eiditorModules["upload-box"]}
+                    />
+                  }
                 </label>
               </Tooltip>
               <input
@@ -224,12 +282,18 @@ const editor = () => {
               type="text"
               placeholder="请输入标题"
               className={eiditorModules["titleInput"]}
-              ref={titleInput}
+              ref={TitleInputRef}
+              onInput={(e) => {
+                setTitleInput(e.target.value);
+              }}
             />
+          </div>
+          <div className={eiditorModules["header-sub"]}>
             <Button
               type="primary"
               className="writeArtice"
-              onClick={addArticleFun}>
+              onClick={addArticleFun}
+            >
               发布文章
             </Button>
             <div className={eiditorModules["avatar"]}>
@@ -245,31 +309,34 @@ const editor = () => {
                   state
                     ? eiditorModules["options"]
                     : [
-                      `${eiditorModules["options"]}`,
-                      `${eiditorModules["hidden"]}`,
-                    ].join(" ")
+                        `${eiditorModules["options"]}`,
+                        `${eiditorModules["hidden"]}`,
+                      ].join(" ")
                 }
               >
                 <ul className="option">
-                  <li onClick={menuOption["goHome"]}>
-                    <HomeOutlined className={eiditorModules["iconFont"]} />
-                    首页
+                  <li onClick={() => menuOption["goHome"](props.history)}>
+                    <HomeOutlined className={eiditorModules["iconFont"]} /> 首页
                   </li>
                   {/* <li>
                     <FormOutlined className={eiditorModules["iconFont"]} />{" "}
                     写文章
                   </li> */}
-                  <li onClick={menuOption["drfat"]}>
+                  <li onClick={() => menuOption["drfat"](props.history)}>
                     <RestOutlined className={eiditorModules["iconFont"]} />{" "}
                     草稿箱
                   </li>
-                  <li onClick={() => menuOption["loginout"](dispatch)}>
-                    <LogoutOutlined className={eiditorModules["iconFont"]} />{" "}
-                    退出登录
-                  </li>
+                  {/* <li onClick={() => menuOption["loginout"](dispatch)}>
+                      <LogoutOutlined className={eiditorModules["iconFont"]} />{" "}
+                      退出登录
+                    </li> */}
                 </ul>
               </div>
             </div>
+          </div>
+          <div className={eiditorModules["phone-show"]}>
+            <span onClick={addArticleFun}>发</span>
+            <span onClick={()=>menuOption["goHome"](props.history)}>首</span>
           </div>
         </div>
       </header>
@@ -278,6 +345,7 @@ const editor = () => {
         locale={zhHans}
         plugins={plugins}
         onChange={(v) => {
+          console.log(v);
           setValue(v);
         }}
         uploadImages={async (files) => {

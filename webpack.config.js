@@ -25,7 +25,7 @@ module.exports = {
         contentBase: path.join(__dirname, "dist"),
         proxy: {
             '/': {
-                target: 'http://127.0.0.1:8089',
+                target: 'http://192.168.31.181:8089',
                 changeOrigin:true
                 // pathRewrite: {
                 //     '^/proxy': ''

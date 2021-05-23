@@ -9,11 +9,13 @@ import {
     FormOutlined,
     RestOutlined,
     UserOutlined,
-    ReadOutlined
+    ReadOutlined,
+    InboxOutlined
 } from "@ant-design/icons";
 import headerModules from "@pc/style/header.less";
 import { CounterContext } from '@pc/sotre/index'
 import { loginContext } from '@pc/sotre/loginContext'
+import EventBus from '@pc/utils/subscribe'
 const layout = {
     wrapperCol: { span: 24 },
 };
@@ -55,6 +57,11 @@ const Header = (props) => {
             }
         };
         window.addEventListener("click", clickOption);
+        
+        EventBus.addEventListener('toLogin',function(){
+              setVisible(true)
+        });
+
         return () => {
             window.removeEventListener("click", clickOption);
         };
@@ -151,13 +158,13 @@ const Header = (props) => {
                         写文章
                         {/* <NavLink to="/Eidtor">写文章</NavLink> */}
                     </Button>
-                    <BellFilled
+                    {/* <BellFilled
                         style={{
                             fontSize: "21px",
                             color: match.url === "/message" ? "#007fff" : "#555",
                             marginRight: "10px",
                         }}
-                    />
+                    /> */}
                     {reduxState.userInfo.userId ? (
                         <div className={headerModules["avatar"]}>
                             <Avatar
@@ -178,23 +185,27 @@ const Header = (props) => {
                                 }
                             >
                                 <ul className={headerModules["option"]}>
-                                    <li onClick={menuOption['write']}>
+                                    <li onClick={()=>menuOption['write'](history)}>
                                         <FormOutlined className={headerModules["iconFont"]} />{" "}
                                         写文章
                                     </li>
-                                    <li onClick={() => menuOption['drfat'](0)}>
+                                    <li onClick={() => menuOption['drfat'](history, 0)}>
                                         <ReadOutlined className={headerModules["iconFont"]} />{" "}
                                         我的创作
                                     </li>
-                                    <li onClick={() => menuOption['drfat'](1)}>
+                                    <li onClick={() => menuOption['aboutUser'](history, 0)}>
+                                       <InboxOutlined className={headerModules["iconFont"]} />{" "}
+                                        我的主页
+                                    </li>
+                                    <li onClick={() => menuOption['drfat'](history,1)}>
                                         <RestOutlined className={headerModules["iconFont"]} />{" "}
                                         草稿箱
                                     </li>
-                                    <li onClick={() => menuOption['Profile'](reduxState.userInfo.userId)}>
+                                    <li onClick={() => menuOption['Profile'](history,reduxState.userInfo.userId)}>
                                         <UserOutlined className={headerModules["iconFont"]} />{" "}
                                         个人资料
                                     </li>
-                                    <li onClick={() => menuOption['loginout'](dispatch)}>
+                                    <li onClick={() => menuOption['loginout'](history,dispatch)}>
                                         <LogoutOutlined className={headerModules["iconFont"]} />{" "}
                                         退出登录
                                     </li>

@@ -1,12 +1,12 @@
 import axios from "axios";
 import qs from "qs";
 import { baseUrl } from "@pc/config/baseUrl";
-import { message } from "antd";
+import { message, Modal } from "antd";
 const api = axios.create({
   baseURL: baseUrl,
   timeout: 10000,
 });
-import EventBus from '@pc/utils/subscribe'
+import EventBus from "@pc/utils/subscribe";
 api.interceptors.request.use(
   (config) => {
     console.log(config);
@@ -33,9 +33,17 @@ api.interceptors.response.use((response) => {
       message.error(data.msg);
       return Promise.reject(data.msg);
     } else if (data.code == 401) {
-      EventBus.dispatchEvent('loginout',{});  
+      EventBus.dispatchEvent("loginout", {});
       message.error(data.msg);
       return Promise.reject(data.msg);
+    } else if (data.code == 402) {
+      EventBus.dispatchEvent("toLogin");
+      return Promise.reject(data.msg);
+    } else {
+      Modal.error({
+        title: "服务器异常",
+        content: data.msg,
+      });
     }
   }
 });
@@ -66,9 +74,9 @@ export function post(url, params, isUpload) {
         "content-type": "multipart/form-data",
       },
     };
-    if(params['isAuth']){
-       url = url+"?isAuth="+params['isAuth']
-       delete params['isAuth']
+    if (params["isAuth"]) {
+      url = url + "?isAuth=" + params["isAuth"];
+      delete params["isAuth"];
     }
     return api.post(url, params, config);
   }

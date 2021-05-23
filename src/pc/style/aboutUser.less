@@ -1,0 +1,35 @@
+:global {
+  .collect-wrap {
+    li {
+      padding-left: 15px;
+      font-weight: bolder;
+      color: #333;
+      font-size: 16px;
+
+      span {
+        font-size: 13px;
+        font-weight: lighter;
+      }
+    }
+    li:hover {
+      background: rgba(169, 209, 255, 0.2);
+      box-sizing: border-box;
+    }
+  }
+
+  @media screen and (max-width: 750px) {
+    .ant-tabs-nav {
+      margin-bottom: 2px !important;
+    }
+    .collect-wrap {
+      li {
+        font-size: 13px;
+        padding-left: s5px;
+
+        span {
+          font-size: 12px;
+        }
+      }
+    }
+  }
+}
